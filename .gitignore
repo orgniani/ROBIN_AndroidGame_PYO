@@ -1,0 +1,13 @@
+.idea/.idea.TDDExample/.idea
+*.csproj
+.idea/.idea.TDDExample
+Library
+Temp
+Logs
+obj
+TDDExample.sln
+.vs/unitytddexample/v16/.suo
+UserSettings/EditorUserSettings.asset
+UserSettings/Layouts/default-2022.dwlt
+UserSettings/Search.settings
+.vs/EjemplosClase_CodeSmells/v16/.suo

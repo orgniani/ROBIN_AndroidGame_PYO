@@ -1,0 +1,93 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!687078895 &4343727234628468602
+SpriteAtlas:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: SpriteAtlas_Game
+  m_EditorData:
+    serializedVersion: 2
+    textureSettings:
+      serializedVersion: 2
+      anisoLevel: 1
+      compressionQuality: 50
+      maxTextureSize: 2048
+      textureCompression: 0
+      filterMode: 1
+      generateMipMaps: 0
+      readable: 0
+      crunchedCompression: 0
+      sRGB: 1
+    platformSettings:
+    - serializedVersion: 3
+      m_BuildTarget: DefaultTexturePlatform
+      m_MaxTextureSize: 2048
+      m_ResizeAlgorithm: 0
+      m_TextureFormat: -1
+      m_TextureCompression: 1
+      m_CompressionQuality: 50
+      m_CrunchedCompression: 1
+      m_AllowsAlphaSplitting: 0
+      m_Overridden: 0
+      m_IgnorePlatformSupport: 0
+      m_AndroidETC2FallbackOverride: 0
+      m_ForceMaximumCompressionQuality_BC6H_BC7: 0
+    packingSettings:
+      serializedVersion: 2
+      padding: 4
+      blockOffset: 1
+      allowAlphaSplitting: 0
+      enableRotation: 0
+      enableTightPacking: 0
+      enableAlphaDilation: 0
+    secondaryTextureSettings: {}
+    variantMultiplier: 1
+    packables:
+    - {fileID: 2800000, guid: eadc02eea0bc15542bc349eafa2d1158, type: 3}
+    - {fileID: 2800000, guid: 941526370d7e08c4cb21dabb151d5198, type: 3}
+    - {fileID: 2800000, guid: c46295a803f8646f38e25bbe4b3e71c5, type: 3}
+    - {fileID: 2800000, guid: 0812cdfb38a2a42419e72319d6dd7d52, type: 3}
+    - {fileID: 2800000, guid: 73c43e7ec71112a4e9d818bf5fe7d998, type: 3}
+    - {fileID: 2800000, guid: 67cfb02c6abc24647be2c8d746b62e57, type: 3}
+    - {fileID: 2800000, guid: 970a488f816ae3049ab8f9fa861f3bdb, type: 3}
+    - {fileID: 2800000, guid: c41d2490a670a1242af2e07e8d1f9591, type: 3}
+    - {fileID: 2800000, guid: 5693c25b52308e64db2d6075897a15a4, type: 3}
+    bindAsDefault: 1
+    isAtlasV2: 0
+    cachedData: {fileID: 0}
+    packedSpriteRenderDataKeys:
+    - c41d2490a670a1242af2e07e8d1f9591: 21300000
+    - 941526370d7e08c4cb21dabb151d5198: 21300000
+    - c46295a803f8646f38e25bbe4b3e71c5: 21300000
+    - 5693c25b52308e64db2d6075897a15a4: 21300000
+    - 0812cdfb38a2a42419e72319d6dd7d52: 21300000
+    - 67cfb02c6abc24647be2c8d746b62e57: 21300000
+    - 73c43e7ec71112a4e9d818bf5fe7d998: 21300000
+    - eadc02eea0bc15542bc349eafa2d1158: 21300000
+    - 970a488f816ae3049ab8f9fa861f3bdb: 21300000
+  m_MasterAtlas: {fileID: 0}
+  m_PackedSprites:
+  - {fileID: 21300000, guid: c41d2490a670a1242af2e07e8d1f9591, type: 3}
+  - {fileID: 21300000, guid: 941526370d7e08c4cb21dabb151d5198, type: 3}
+  - {fileID: 21300000, guid: c46295a803f8646f38e25bbe4b3e71c5, type: 3}
+  - {fileID: 21300000, guid: 5693c25b52308e64db2d6075897a15a4, type: 3}
+  - {fileID: 21300000, guid: 0812cdfb38a2a42419e72319d6dd7d52, type: 3}
+  - {fileID: 21300000, guid: 67cfb02c6abc24647be2c8d746b62e57, type: 3}
+  - {fileID: 21300000, guid: 73c43e7ec71112a4e9d818bf5fe7d998, type: 3}
+  - {fileID: 21300000, guid: eadc02eea0bc15542bc349eafa2d1158, type: 3}
+  - {fileID: 21300000, guid: 970a488f816ae3049ab8f9fa861f3bdb, type: 3}
+  m_PackedSpriteNamesToIndex:
+  - active
+  - healer
+  - grass
+  - square
+  - fighter
+  - enemy1
+  - enemy2
+  - range
+  - button
+  m_RenderDataMap: {}
+  m_Tag: SpriteAtlas_Game
+  m_IsVariant: 0
