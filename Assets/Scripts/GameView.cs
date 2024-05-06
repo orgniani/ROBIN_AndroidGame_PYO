@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -11,9 +12,10 @@ public class GameView : MonoBehaviour
     private GameObject player;
 
     [Header("Players")]
-    [SerializeField] private GameObject healer;
-    [SerializeField] private GameObject ranger;
-    [SerializeField] private GameObject fighter;
+    [SerializeField] private List<Player> players;
+    [SerializeField] private List<HealthController> playersHP;
+
+    [SerializeField] private ActionMenuController menuController;
 
     private List<List<GameObject>> grid;
     private GameController gameController;
@@ -21,12 +23,35 @@ public class GameView : MonoBehaviour
     private int turn = 1;
     private bool gameOver = false;
 
-    private int maxSpeed = 2;
-    private bool waitingForDice = false;
+    private int maxTurns = 3;
+    public bool waitingForMovement = true;
 
     private void Awake()
     {
-        player = fighter;
+        player = players[0].gameObject;
+    }
+
+    private void OnEnable()
+    {
+        for (int i = playersHP.Count - 1; i >= 0; i--)
+        {
+            playersHP[i].onDead += KillCounter;
+        }
+    }
+
+    private void KillCounter()
+    {
+        for (int i = playersHP.Count - 1; i >= 0; i--)
+        {
+            if (playersHP[i].Health <= 0)
+            {
+                playersHP[i].onDead -= KillCounter;
+                playersHP.Remove(playersHP[i]);
+                players.Remove(players[i]);
+                gameController.RemovePositionAfterDeath(i);
+                maxTurns--; 
+            }
+        }
     }
 
     private void Start()
@@ -37,7 +62,8 @@ public class GameView : MonoBehaviour
 
     private void Update()
     {
-        if (waitingForDice) return;
+        if (!waitingForMovement) return;
+        if (gameOver) return;
 
         if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.A))
             gameController.MoveCharacterLeft();
@@ -57,58 +83,52 @@ public class GameView : MonoBehaviour
         gameController.UpdateCharacterPosition(turn);
 
         yield return WaitForMovement();
+        yield return WaitForAction();
 
         gameController.StoreCharacterPosition(turn);
-        //turn = (turn == 1) ? 2 : 1;
-        turn = (turn % 3) + 1;
 
-        yield return new WaitForSeconds(2);
+        ShowWinFeedback();
+        //turn = (turn == 1) ? 2 : 1;
+        turn = (turn % maxTurns) + 1;
+
+        yield return new WaitForSeconds(1);
         StartCoroutine(PlayTurn());
     }
 
     private void UpdateCharacter()
     {
-        if (turn == 1)
-            player = fighter;
-        else if (turn == 2)
-            player = healer;
-        else if (turn == 3)
-            player = ranger;
+        player = players[turn - 1].gameObject;
     }
     private IEnumerator WaitForMovement()
     {
-        waitingForDice = false;
+        waitingForMovement = true;
 
-        while (gameController.speed < maxSpeed )
+        while (gameController.speed < players[turn - 1].GetMaxSpeed())
         {
             yield return new WaitForEndOfFrame();
         }
 
-        //while (diceResult == 0)
-        //{
-        //    yield return new WaitForEndOfFrame();
-        //}
-
-        gameController.speed = 0;
-        waitingForDice = true;
+        waitingForMovement = false;
     }
 
-    public void OnChooseAction()
+    private IEnumerator WaitForAction()
     {
-        if (waitingForDice)
-            return;
+        while (!menuController.chooseAction)
+        {
+            yield return new WaitForEndOfFrame();
+        }
 
-        //System.Random r = new System.Random();
-        //
-        //int resultado = r.Next(1, 7);
-        //labelDiceResult.text = resultado.ToString();
-        //
-        //diceResult = resultado;
+        gameController.speed = 0;
+        menuController.chooseAction = false;
     }
 
     public void ShowWinFeedback()
     {
-        Debug.Log("YOU WIN!!!");
+        if(players.Count == 1)
+        {
+            Debug.Log("YOU WIN!!!");
+            gameOver = true;
+        }
     }
 
     private void MovePlayerToCell(GameObject gridCell)
@@ -149,12 +169,12 @@ public class GameView : MonoBehaviour
     {
         MovePlayerToCell(fighterPosition.x, fighterPosition.y);
 
-        player = healer;
+        player = players[1].gameObject;
         MovePlayerToCell(healerPosition.x, healerPosition.y);
 
-        player = ranger;
+        player = players[2].gameObject;
         MovePlayerToCell(rangerPosition.x, rangerPosition.y);
 
-        player = fighter;
+        player = players[0].gameObject;
     }   
 }

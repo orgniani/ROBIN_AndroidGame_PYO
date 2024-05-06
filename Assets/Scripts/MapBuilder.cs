@@ -3,10 +3,22 @@ using UnityEngine;
 
 public class MapBuilder
 {
+    private List<Vector2Int> assignedPositions = new List<Vector2Int>();
+
     public virtual Vector2Int GetStartPosition()
     {
-        //return Configurations.StartPosition;
-        return GetRandomPosition();
+        //return GetRandomPosition();
+
+        Vector2Int position;
+        do
+        {
+            position = GetRandomPosition();
+        } while (assignedPositions.Contains(position));
+
+        assignedPositions.Add(position);
+
+        Debug.Log("player position: " + position);
+        return position;
     }
 
     private Vector2Int GetRandomPosition()

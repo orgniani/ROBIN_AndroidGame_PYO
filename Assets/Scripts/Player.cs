@@ -1,11 +1,8 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 public class Player : MonoBehaviour
 {
     [SerializeField] private int maxSpeed;
-    [SerializeField] private int HP;
 
     [SerializeField] private int rangeDamage;
     [SerializeField] private int meleeDamage;
@@ -18,32 +15,24 @@ public class Player : MonoBehaviour
         this.playerNumber = playerNumber;
     }
 
-    private void RecieveDamage(int damage)
+    public int GetMaxSpeed()
     {
-        HP -= damage;
+        return maxSpeed;
     }
 
-    private void CureHP(int addedHP)
+    public void MeleeAttack(HealthController targetHP)
     {
-        HP += addedHP;
+        targetHP.ReceiveDamage(meleeDamage);
     }
 
-    public void Attack(Player target, int attackType)
+    public void RangeAttack(HealthController targetHP)
     {
-        if(attackType == 1) //RANGE
-        {
-            target.RecieveDamage(rangeDamage);
-        }
-
-        if (attackType == 2) //MELEE
-        {
-            target.RecieveDamage(meleeDamage);
-        }
+        targetHP.ReceiveDamage(rangeDamage);
     }
 
-    public void Heal(Player target)
+    public void Heal(HealthController targetHP)
     {
-        target.CureHP(cureHP);
+        targetHP.CureHP(cureHP);
     }
 
     public void PlayTurn(GameController gameController)
