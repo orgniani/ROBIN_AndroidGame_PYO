@@ -1,6 +1,5 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.XR;
 
 public class GameController
 {
@@ -73,28 +72,18 @@ public class GameController
 
     public void StoreCharacterPosition(int turn)
     {
-        if (positions[turn - 1] == null) return;
-
         positions[turn-1] = characterPosition;
         map[positions[turn-1].y][positions[turn-1].x] = TerrainType.CHARACTER;
     }
 
     public void UpdateCharacterPosition(int turn)
     {
-        if (positions[turn - 1] == null) return;
-
         characterPosition = positions[turn-1];
     }
 
     public void RemovePositionAfterDeath(int index)
     {
-        //map[positions[index].y][positions[index].x] = TerrainType.GRASS;
-        //positions.Remove(positions[index]);
-
-        //characterPosition = positions[turn -1];
-
         map[positions[index].y][positions[index].x] = TerrainType.GRASS;
-        positions.RemoveAt(index);
     }
 
     private void MoveCharacterToPosition(int newX, int newY)

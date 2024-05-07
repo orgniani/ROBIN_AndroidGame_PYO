@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using Unity.Burst.CompilerServices;
 using UnityEngine;
 
 public class GameView : MonoBehaviour
@@ -14,6 +13,9 @@ public class GameView : MonoBehaviour
     [Header("Players")]
     [SerializeField] private List<Player> players;
     [SerializeField] private List<HealthController> playersHP;
+    private bool[] playerDeadFlags;
+
+    private int playerCounter = 0;
 
     [SerializeField] private ActionMenuController menuController;
 
@@ -26,11 +28,19 @@ public class GameView : MonoBehaviour
     private int maxTurns = 3;
     public bool waitingForMovement = true;
 
-    private bool playerDied = false;
-
     private void Awake()
     {
         player = players[0].gameObject;
+        playerCounter = players.Count;
+
+        Debug.Log(playerCounter);
+
+        playerDeadFlags = new bool[players.Count];
+
+        for (int i = 0; i < playerDeadFlags.Length; i++)
+        {
+            playerDeadFlags[i] = false;
+        }
     }
 
     private void OnEnable()
@@ -43,30 +53,17 @@ public class GameView : MonoBehaviour
 
     private void KillCounter()
     {
-        playerDied = true;
-
-        for (int i = playersHP.Count - 1; i >= 0; i--)
+        for (int i = 0; i < playersHP.Count; i++)
         {
             if (playersHP[i].Health <= 0)
             {
-                playersHP[i].onDead -= KillCounter;
-                playersHP.RemoveAt(i);
-                players.RemoveAt(i);
-
-                //if (i == turn - 1)
-                //{
-                //    turn = (turn % maxTurns) + 1;
-                //}
-
-                maxTurns--;
-                turn = (turn % maxTurns) + 1;
-
-                Debug.Log("TURN: " + turn);
+                Debug.Log("Player " + (i + 1) + " has died.");
+                playerDeadFlags[i] = true;
                 gameController.RemovePositionAfterDeath(i);
             }
         }
 
-        playerDied = false;
+        playerCounter--;
     }
 
     private void Start()
@@ -94,9 +91,9 @@ public class GameView : MonoBehaviour
     {
         if (gameOver) yield break;
 
-        yield return WaitForCheckDeath();
+        bool currentPlayerIsDead = IsPlayerDead(turn);
 
-        if (playerDied == false)
+        if (!currentPlayerIsDead)
         {
             UpdateCharacter();
 
@@ -106,31 +103,21 @@ public class GameView : MonoBehaviour
             yield return WaitForAction();
 
             gameController.StoreCharacterPosition(turn);
-
-            turn = (turn % maxTurns) + 1;
         }
 
-        yield return WaitForCheckDeath();
         ShowWinFeedback();
-        //turn = (turn == 1) ? 2 : 1;
-
-        //yield return new WaitForSeconds(1);
+        turn = (turn % maxTurns) + 1;
         StartCoroutine(PlayTurn());
+    }
+
+    private bool IsPlayerDead(int playerTurn)
+    {
+        return playerDeadFlags[playerTurn - 1];
     }
 
     private void UpdateCharacter()
     {
-        if (players[turn - 1] == null) return;
         player = players[turn - 1].gameObject;
-    }
-
-    private IEnumerator WaitForCheckDeath()
-    {
-        while (playerDied)
-        {
-            Debug.Log("waitin");
-            yield return new WaitForEndOfFrame();
-        }
     }
 
     private IEnumerator WaitForMovement()
@@ -158,7 +145,7 @@ public class GameView : MonoBehaviour
 
     public void ShowWinFeedback()
     {
-        if(players.Count == 1)
+        if(playerCounter == 1)
         {
             Debug.Log("YOU WIN!!!");
             gameOver = true;
