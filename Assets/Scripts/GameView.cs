@@ -1,6 +1,6 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Burst.CompilerServices;
 using UnityEngine;
 
 public class GameView : MonoBehaviour
@@ -26,6 +26,8 @@ public class GameView : MonoBehaviour
     private int maxTurns = 3;
     public bool waitingForMovement = true;
 
+    private bool playerDied = false;
+
     private void Awake()
     {
         player = players[0].gameObject;
@@ -41,17 +43,30 @@ public class GameView : MonoBehaviour
 
     private void KillCounter()
     {
+        playerDied = true;
+
         for (int i = playersHP.Count - 1; i >= 0; i--)
         {
             if (playersHP[i].Health <= 0)
             {
                 playersHP[i].onDead -= KillCounter;
-                playersHP.Remove(playersHP[i]);
-                players.Remove(players[i]);
+                playersHP.RemoveAt(i);
+                players.RemoveAt(i);
+
+                //if (i == turn - 1)
+                //{
+                //    turn = (turn % maxTurns) + 1;
+                //}
+
+                maxTurns--;
+                turn = (turn % maxTurns) + 1;
+
+                Debug.Log("TURN: " + turn);
                 gameController.RemovePositionAfterDeath(i);
-                maxTurns--; 
             }
         }
+
+        playerDied = false;
     }
 
     private void Start()
@@ -79,26 +94,45 @@ public class GameView : MonoBehaviour
     {
         if (gameOver) yield break;
 
-        UpdateCharacter();
-        gameController.UpdateCharacterPosition(turn);
+        yield return WaitForCheckDeath();
 
-        yield return WaitForMovement();
-        yield return WaitForAction();
+        if (playerDied == false)
+        {
+            UpdateCharacter();
 
-        gameController.StoreCharacterPosition(turn);
+            gameController.UpdateCharacterPosition(turn);
 
+            yield return WaitForMovement();
+            yield return WaitForAction();
+
+            gameController.StoreCharacterPosition(turn);
+
+            turn = (turn % maxTurns) + 1;
+        }
+
+        yield return WaitForCheckDeath();
         ShowWinFeedback();
         //turn = (turn == 1) ? 2 : 1;
-        turn = (turn % maxTurns) + 1;
 
-        yield return new WaitForSeconds(1);
+        //yield return new WaitForSeconds(1);
         StartCoroutine(PlayTurn());
     }
 
     private void UpdateCharacter()
     {
+        if (players[turn - 1] == null) return;
         player = players[turn - 1].gameObject;
     }
+
+    private IEnumerator WaitForCheckDeath()
+    {
+        while (playerDied)
+        {
+            Debug.Log("waitin");
+            yield return new WaitForEndOfFrame();
+        }
+    }
+
     private IEnumerator WaitForMovement()
     {
         waitingForMovement = true;

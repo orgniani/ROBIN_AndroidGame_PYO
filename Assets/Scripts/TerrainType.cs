@@ -2,9 +2,5 @@
 {
     START = 0,
     GRASS,
-    FIGHTER,
-    HEALER,
-    RANGER,
-    ENEMY1,
-    ENEMY2
+    CHARACTER
 }

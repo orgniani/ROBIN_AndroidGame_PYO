@@ -16,8 +16,6 @@ public class MapBuilder
         } while (assignedPositions.Contains(position));
 
         assignedPositions.Add(position);
-
-        Debug.Log("player position: " + position);
         return position;
     }
 

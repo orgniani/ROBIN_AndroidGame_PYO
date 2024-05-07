@@ -1,5 +1,6 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.XR;
 
 public class GameController
 {
@@ -28,22 +29,14 @@ public class GameController
         rangerPosition = mapBuilder.GetStartPosition();
 
         positions = new List<Vector2Int>() { fighterPosition , healerPosition, rangerPosition };
-
-        //positions.Add(fighterPosition);
-        //positions.Add(healerPosition);
-        //positions.Add(rangerPosition);
-
-        //if (positions[0] == null) Debug.Log("The position is null!");
-        characterPosition = fighterPosition;
-        //characterPosition = positions[0];
+        characterPosition = positions[0];
 
         gameView.InitializeMap(map);
-        //gameView.InitializeCharacterPositions(fighterPosition, healerPosition, rangerPosition);
         gameView.InitializeCharacterPositions(positions[0], positions[1], positions[2]);
 
-        map[fighterPosition.y][fighterPosition.x] = TerrainType.FIGHTER;
-        map[healerPosition.y][healerPosition.x] = TerrainType.HEALER;
-        map[rangerPosition.y][rangerPosition.x] = TerrainType.RANGER;
+        map[fighterPosition.y][fighterPosition.x] = TerrainType.CHARACTER;
+        map[healerPosition.y][healerPosition.x] = TerrainType.CHARACTER;
+        map[rangerPosition.y][rangerPosition.x] = TerrainType.CHARACTER;
     }
 
     public void MoveCharacterRight()
@@ -80,50 +73,28 @@ public class GameController
 
     public void StoreCharacterPosition(int turn)
     {
-        positions[turn-1] = characterPosition;
-        map[positions[turn-1].y][positions[turn-1].x] = TerrainType.FIGHTER;
+        if (positions[turn - 1] == null) return;
 
-        //switch (turn)
-        //{
-        //    case 1:
-        //        fighterPosition = characterPosition;
-        //        map[fighterPosition.y][fighterPosition.x] = TerrainType.FIGHTER;
-        //        break;
-        //
-        //    case 2:
-        //        healerPosition = characterPosition;
-        //        map[healerPosition.y][healerPosition.x] = TerrainType.HEALER;
-        //        break;
-        //
-        //    case 3:
-        //        rangerPosition = characterPosition;
-        //        map[rangerPosition.y][rangerPosition.x] = TerrainType.RANGER;
-        //        break;
-        //}
+        positions[turn-1] = characterPosition;
+        map[positions[turn-1].y][positions[turn-1].x] = TerrainType.CHARACTER;
     }
 
     public void UpdateCharacterPosition(int turn)
     {
+        if (positions[turn - 1] == null) return;
+
         characterPosition = positions[turn-1];
-        //switch (turn)
-        //{
-        //    case 1:
-        //        characterPosition = fighterPosition;
-        //        break;
-        //
-        //    case 2:
-        //        characterPosition = healerPosition;
-        //        break;
-        //
-        //    case 3:
-        //        characterPosition = rangerPosition;
-        //        break;
-        //}
     }
 
     public void RemovePositionAfterDeath(int index)
     {
-        positions.Remove(positions[index]);
+        //map[positions[index].y][positions[index].x] = TerrainType.GRASS;
+        //positions.Remove(positions[index]);
+
+        //characterPosition = positions[turn -1];
+
+        map[positions[index].y][positions[index].x] = TerrainType.GRASS;
+        positions.RemoveAt(index);
     }
 
     private void MoveCharacterToPosition(int newX, int newY)

@@ -15,7 +15,6 @@ public class ActionMenuController : MonoBehaviour
         if (gameView.waitingForMovement) return;
 
         buttonBlockerScreen.SetActive(true);
-
         StartCoroutine(RangeAttackSequence(player));
     }
 
