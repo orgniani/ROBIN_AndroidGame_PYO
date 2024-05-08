@@ -286,7 +286,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ee2bf4db1672ed94cb1422bd320ab8ee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  gameView: {fileID: 159470907}
+  turnManager: {fileID: 2021190549}
   buttonBlockerScreen: {fileID: 841252572}
   chooseAction: 0
 --- !u!4 &62919338
@@ -539,7 +539,6 @@ GameObject:
   m_Component:
   - component: {fileID: 159470906}
   - component: {fileID: 159470907}
-  - component: {fileID: 159470908}
   m_Layer: 0
   m_Name: GameplayArea
   m_TagString: Untagged
@@ -586,28 +585,7 @@ MonoBehaviour:
   - {fileID: 3337749285637055757, guid: 01904e16a02d643feb9fc3f6b8f4fe37, type: 3}
   - {fileID: 3406136864360646977, guid: 66128722ec3999946b4cb7776c9c9673, type: 3}
   - {fileID: 4217737486099431880, guid: 1004020e985b244aebc82007ac08f6ab, type: 3}
-  players:
-  - {fileID: 5699203832373886038}
-  - {fileID: 2938056019294661237}
-  - {fileID: 4163245702975569312}
-  playersHP:
-  - {fileID: 5699203832373886037}
-  - {fileID: 2938056019294661236}
-  - {fileID: 4163245702975569311}
-  menuController: {fileID: 62919337}
-  waitingForMovement: 1
---- !u!114 &159470908
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 159470904}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: e10f1e782e8afe44cbc012010e3912f0, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
+  turnManager: {fileID: 2021190549}
 --- !u!1 &261438453
 GameObject:
   m_ObjectHideFlags: 0
@@ -3903,6 +3881,62 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2006314516}
   m_CullTransparentMesh: 1
+--- !u!1 &2021190548
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 2021190550}
+  - component: {fileID: 2021190549}
+  m_Layer: 0
+  m_Name: TurnManager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &2021190549
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2021190548}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: e10f1e782e8afe44cbc012010e3912f0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  players:
+  - {fileID: 5699203832373886038}
+  - {fileID: 2938056019294661237}
+  - {fileID: 4163245702975569312}
+  playersHP:
+  - {fileID: 5699203832373886037}
+  - {fileID: 2938056019294661236}
+  - {fileID: 4163245702975569311}
+  menuController: {fileID: 62919337}
+  gameView: {fileID: 159470907}
+  gameOver: 0
+  waitingForMovement: 1
+--- !u!4 &2021190550
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2021190548}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 624.5802, y: 334.53024, z: -0.87150866}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &2062916503
 GameObject:
   m_ObjectHideFlags: 0
@@ -4411,7 +4445,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c5ecd1584faa0e438b89b5833ac239b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  health: 10
+  health: 15
 --- !u!114 &2938056019294661237
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4446,7 +4480,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c5ecd1584faa0e438b89b5833ac239b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  health: 10
+  health: 15
 --- !u!114 &4163245702975569312
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4481,7 +4515,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6c5ecd1584faa0e438b89b5833ac239b, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  health: 10
+  health: 20
 --- !u!114 &5699203832373886038
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -4694,3 +4728,4 @@ SceneRoots:
   - {fileID: 159470906}
   - {fileID: 1132824263}
   - {fileID: 62919338}
+  - {fileID: 2021190550}

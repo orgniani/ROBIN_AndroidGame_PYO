@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 
 public class GameController
@@ -31,7 +32,7 @@ public class GameController
         characterPosition = positions[0];
 
         gameView.InitializeMap(map);
-        gameView.InitializeCharacterPositions(positions[0], positions[1], positions[2]);
+        gameView.InitializeCharacterPositions(positions);
 
         map[fighterPosition.y][fighterPosition.x] = TerrainType.CHARACTER;
         map[healerPosition.y][healerPosition.x] = TerrainType.CHARACTER;
@@ -73,7 +74,7 @@ public class GameController
     public void StoreCharacterPosition(int turn)
     {
         positions[turn-1] = characterPosition;
-        map[positions[turn-1].y][positions[turn-1].x] = TerrainType.CHARACTER;
+        //map[positions[turn-1].y][positions[turn-1].x] = TerrainType.CHARACTER;
     }
 
     public void UpdateCharacterPosition(int turn)
@@ -81,8 +82,13 @@ public class GameController
         characterPosition = positions[turn-1];
     }
 
-    public void RemovePositionAfterDeath(int index)
+    public void RemovePositionAfterDeath(int index, int turn)
     {
+        if (index == turn - 1)
+        {
+            positions[index] = characterPosition;
+        }
+
         map[positions[index].y][positions[index].x] = TerrainType.GRASS;
     }
 
@@ -94,6 +100,7 @@ public class GameController
         }
 
         map[characterPosition.y][characterPosition.x] = TerrainType.GRASS;
+        map[newY][newX] = TerrainType.CHARACTER;
 
         characterPosition = new Vector2Int(newX, newY);
 

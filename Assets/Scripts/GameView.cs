@@ -8,148 +8,26 @@ public class GameView : MonoBehaviour
     [SerializeField] private float spaceBetweenCells = 0.1f;
 
     [SerializeField] private List<GameObject> terrainPrefabs;
+
     private GameObject player;
+    private List<GameObject> playerObjects = new List<GameObject>();
 
-    [Header("Players")]
-    [SerializeField] private List<Player> players;
-    [SerializeField] private List<HealthController> playersHP;
-    private bool[] playerDeadFlags;
-
-    private int playerCounter = 0;
-
-    [SerializeField] private ActionMenuController menuController;
+    [SerializeField] private TurnManager turnManager;
 
     private List<List<GameObject>> grid;
-    private GameController gameController;
 
-    private int turn = 1;
-    private bool gameOver = false;
-
-    private int maxTurns = 3;
-    public bool waitingForMovement = true;
-
-    private void Awake()
+    public void SetPlayers(List<GameObject> players)
     {
-        player = players[0].gameObject;
-        playerCounter = players.Count;
-
-        Debug.Log(playerCounter);
-
-        playerDeadFlags = new bool[players.Count];
-
-        for (int i = 0; i < playerDeadFlags.Length; i++)
+        for (int i = 0; i < players.Count; i++)
         {
-            playerDeadFlags[i] = false;
+            playerObjects.Clear();
+            playerObjects.AddRange(players);
         }
     }
 
-    private void OnEnable()
+    public void SetCurrentPlayer(GameObject currentPlayer)
     {
-        for (int i = playersHP.Count - 1; i >= 0; i--)
-        {
-            playersHP[i].onDead += KillCounter;
-        }
-    }
-
-    private void KillCounter()
-    {
-        for (int i = 0; i < playersHP.Count; i++)
-        {
-            if (playersHP[i].Health <= 0)
-            {
-                Debug.Log("Player " + (i + 1) + " has died.");
-                playerDeadFlags[i] = true;
-                gameController.RemovePositionAfterDeath(i);
-            }
-        }
-
-        playerCounter--;
-    }
-
-    private void Start()
-    {
-        gameController = new GameController(this, new MapBuilder());
-        StartCoroutine(PlayTurn());
-    }
-
-    private void Update()
-    {
-        if (!waitingForMovement) return;
-        if (gameOver) return;
-
-        if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.A))
-            gameController.MoveCharacterLeft();
-        else if (Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.D))
-            gameController.MoveCharacterRight();
-        else if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.W))
-            gameController.MoveCharacterUp();
-        else if (Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.S))
-            gameController.MoveCharacterDown();
-    }
-
-    private IEnumerator PlayTurn()
-    {
-        if (gameOver) yield break;
-
-        bool currentPlayerIsDead = IsPlayerDead(turn);
-
-        if (!currentPlayerIsDead)
-        {
-            UpdateCharacter();
-
-            gameController.UpdateCharacterPosition(turn);
-
-            yield return WaitForMovement();
-            yield return WaitForAction();
-
-            gameController.StoreCharacterPosition(turn);
-        }
-
-        ShowWinFeedback();
-        turn = (turn % maxTurns) + 1;
-        StartCoroutine(PlayTurn());
-    }
-
-    private bool IsPlayerDead(int playerTurn)
-    {
-        return playerDeadFlags[playerTurn - 1];
-    }
-
-    private void UpdateCharacter()
-    {
-        player = players[turn - 1].gameObject;
-    }
-
-    private IEnumerator WaitForMovement()
-    {
-        waitingForMovement = true;
-
-        while (gameController.speed < players[turn - 1].GetMaxSpeed())
-        {
-            yield return new WaitForEndOfFrame();
-        }
-
-        waitingForMovement = false;
-    }
-
-    private IEnumerator WaitForAction()
-    {
-        while (!menuController.chooseAction)
-        {
-            yield return new WaitForEndOfFrame();
-        }
-
-        gameController.speed = 0;
-        menuController.chooseAction = false;
-    }
-
-    public void ShowWinFeedback()
-    {
-        if(playerCounter == 1)
-        {
-            Debug.Log("YOU WIN!!!");
-            gameOver = true;
-        }
+        player = currentPlayer;
     }
 
     private void MovePlayerToCell(GameObject gridCell)
@@ -186,16 +64,15 @@ public class GameView : MonoBehaviour
         }
     }
 
-    public void InitializeCharacterPositions(Vector2Int fighterPosition, Vector2Int healerPosition, Vector2Int rangerPosition)
+    public void InitializeCharacterPositions(List<Vector2Int> playerPositions)
     {
-        MovePlayerToCell(fighterPosition.x, fighterPosition.y);
+        for (int i = 0; i < playerObjects.Count; i++)
+        {
+            player = playerObjects[i];
+            MovePlayerToCell(playerPositions[i].x, playerPositions[i].y);
+        }
 
-        player = players[1].gameObject;
-        MovePlayerToCell(healerPosition.x, healerPosition.y);
+        player = playerObjects[0];
+    }
 
-        player = players[2].gameObject;
-        MovePlayerToCell(rangerPosition.x, rangerPosition.y);
-
-        player = players[0].gameObject;
-    }   
 }

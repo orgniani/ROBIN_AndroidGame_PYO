@@ -3,7 +3,7 @@ using UnityEngine;
 
 public class ActionMenuController : MonoBehaviour
 {
-    [SerializeField] private GameView gameView;
+    [SerializeField] private TurnManager turnManager;
     [SerializeField] private GameObject buttonBlockerScreen;
 
     public bool chooseAction = false;
@@ -12,7 +12,7 @@ public class ActionMenuController : MonoBehaviour
 
     public void OnRangeAttack(Player player)
     {
-        if (gameView.waitingForMovement) return;
+        if (turnManager.waitingForMovement) return;
 
         buttonBlockerScreen.SetActive(true);
         StartCoroutine(RangeAttackSequence(player));
@@ -33,7 +33,7 @@ public class ActionMenuController : MonoBehaviour
 
     public void OnMeleeAttack(Player player)
     {
-        if (gameView.waitingForMovement) return;
+        if (turnManager.waitingForMovement) return;
 
         buttonBlockerScreen.SetActive(true);
 
@@ -55,7 +55,7 @@ public class ActionMenuController : MonoBehaviour
 
     public void OnHeal(Player player)
     {
-        if (gameView.waitingForMovement) return;
+        if (turnManager.waitingForMovement) return;
 
         buttonBlockerScreen.SetActive(true);
 
@@ -77,7 +77,7 @@ public class ActionMenuController : MonoBehaviour
 
     public void OnChooseTarget(HealthController targetHP)
     {
-        if (gameView.waitingForMovement) return;
+        if (turnManager.waitingForMovement) return;
         this.targetHP = targetHP;
         buttonBlockerScreen.SetActive(false);
     }
