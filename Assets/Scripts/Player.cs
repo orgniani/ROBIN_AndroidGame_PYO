@@ -8,11 +8,26 @@ public class Player : MonoBehaviour
     [SerializeField] private int meleeDamage;
     [SerializeField] private int cureHP;
 
+    [SerializeField] private float maxRangeAttackDistance = 1.55f;
+    [SerializeField] private float maxRangeHealDistance = 1.3f;
+
+    [SerializeField] private bool canOnlyHealSelf = false;
+    [SerializeField] private bool canRangeAttack = false;
+
+    [SerializeField] private GameObject icon;
+    [SerializeField] private HealthController HP;
+
+
     private int playerNumber;
 
-    public Player(int playerNumber)
+    private void OnEnable()
     {
-        this.playerNumber = playerNumber;
+        HP.onDead += HandleDeath;
+    }
+
+    private void OnDisable()
+    {
+        HP.onDead -= HandleDeath;
     }
 
     public int GetMaxSpeed()
@@ -30,14 +45,39 @@ public class Player : MonoBehaviour
         targetHP.ReceiveDamage(rangeDamage);
     }
 
+    public float GetMaxAttackRange()
+    {
+        return maxRangeAttackDistance;
+    }
+
+    public float GetMaxHealRange()
+    {
+        return maxRangeHealDistance;
+    }
+
     public void Heal(HealthController targetHP)
     {
         targetHP.CureHP(cureHP);
     }
 
-    public void PlayTurn(GameController gameController)
+    public bool GetCanOnlyHealSelf()
     {
-        gameController.UpdateCharacterPosition(playerNumber);
-        gameController.StoreCharacterPosition(playerNumber);
+        return canOnlyHealSelf;
+    }
+
+    public bool CanRangeAttack()
+    {
+        return canRangeAttack;
+    }
+
+    public void SetIconActive(bool active)
+    {
+        if (!icon) return;
+        icon.SetActive(active);
+    }
+
+    private void HandleDeath()
+    {
+        Destroy(icon);
     }
 }

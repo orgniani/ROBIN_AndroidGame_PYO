@@ -1,24 +1,53 @@
+using System;
 using System.Collections;
 using UnityEngine;
 
 public class ActionMenuController : MonoBehaviour
 {
+    [SerializeField] private Player player;
     [SerializeField] private TurnManager turnManager;
-    [SerializeField] private GameObject buttonBlockerScreen;
+
+    [SerializeField] private GameObject rangeButton;
 
     public bool chooseAction = false;
 
     private HealthController targetHP;
 
-    public void OnRangeAttack(Player player)
+    private void Update()
     {
-        if (turnManager.waitingForMovement) return;
+        if(!player.CanRangeAttack())
+        {
+            rangeButton.SetActive(false);
+            return;
+        }
 
-        buttonBlockerScreen.SetActive(true);
-        StartCoroutine(RangeAttackSequence(player));
+        rangeButton.SetActive(true);
     }
 
-    private IEnumerator RangeAttackSequence(Player player)
+    public void OnRangeAttack()
+    {
+        turnManager.waitingForMovement = false;
+
+        StopAllCoroutines();
+        StartCoroutine(ActionSequence(player.RangeAttack));
+    }
+    public void OnMeleeAttack()
+    {
+        turnManager.waitingForMovement = false;
+
+        StopAllCoroutines();
+        StartCoroutine(ActionSequence(player.MeleeAttack));
+    }
+
+    public void OnHeal()
+    {
+        turnManager.waitingForMovement = false;
+
+        StopAllCoroutines();
+        StartCoroutine(ActionSequence(player.Heal));
+    }
+
+    private IEnumerator ActionSequence(Action<HealthController> action)
     {
         targetHP = null;
 
@@ -27,58 +56,15 @@ public class ActionMenuController : MonoBehaviour
             yield return new WaitForEndOfFrame();
         }
 
-        player.RangeAttack(targetHP);
+        action(targetHP);
         chooseAction = true;
     }
 
-    public void OnMeleeAttack(Player player)
-    {
-        if (turnManager.waitingForMovement) return;
-
-        buttonBlockerScreen.SetActive(true);
-
-        StartCoroutine(MeleeAttackSequence(player));
-    }
-
-    private IEnumerator MeleeAttackSequence(Player player)
-    {
-        targetHP = null;
-
-        while (targetHP == null)
-        {
-            yield return new WaitForEndOfFrame();
-        }
-
-        player.MeleeAttack(targetHP);
-        chooseAction = true;
-    }
-
-    public void OnHeal(Player player)
-    {
-        if (turnManager.waitingForMovement) return;
-
-        buttonBlockerScreen.SetActive(true);
-
-        StartCoroutine(HealSequence(player));
-    }
-
-    private IEnumerator HealSequence(Player player)
-    {
-        targetHP = null;
-
-        while (targetHP == null)
-        {
-            yield return new WaitForEndOfFrame();
-        }
-
-        player.Heal(targetHP);
-        chooseAction = true;
-    }
 
     public void OnChooseTarget(HealthController targetHP)
     {
         if (turnManager.waitingForMovement) return;
+
         this.targetHP = targetHP;
-        buttonBlockerScreen.SetActive(false);
     }
 }

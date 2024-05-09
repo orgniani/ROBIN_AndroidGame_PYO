@@ -123,7 +123,7 @@ public class TurnManager : MonoBehaviour
     {
         waitingForMovement = true;
 
-        while (gameController.speed < players[turn - 1].GetMaxSpeed())
+        while (gameController.speed < players[turn - 1].GetMaxSpeed() && waitingForMovement == true)
         {
             yield return new WaitForEndOfFrame();
         }

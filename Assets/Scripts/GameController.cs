@@ -12,7 +12,7 @@ public class GameController
 
     private List<Vector2Int> positions;
 
-    private List<List<TerrainType>> map;
+    public List<List<TerrainType>> map;
 
     private GameView gameView;
 
@@ -70,6 +70,49 @@ public class GameController
             MoveCharacterToPosition(characterPosition.x, characterPosition.y - 1);
         }
     }
+
+    /*
+    public void CheckDistancesBetweenCharacter(int turn)
+    {
+        Vector2Int currentPlayerPosition = positions[turn - 1];
+
+        for (int i = 0; i < positions.Count; i++)
+        {
+            if (i != turn - 1)
+            {
+                Vector2Int otherPosition = positions[i];
+
+                int manhattanDistance = ManhattanDistance(currentPlayerPosition, otherPosition);
+
+                Debug.Log("Manhattan distance between character " + turn + " and character " + (i + 1) + ": " + manhattanDistance);
+            }
+        }
+    }
+
+    private int ManhattanDistance(Vector2Int position1, Vector2Int position2)
+    {
+        return Mathf.Abs(position1.x - position2.x) + Mathf.Abs(position1.y - position2.y);
+    }
+
+    private bool IsAdjacent(Vector2Int player, Vector2Int target, int maxDistance)
+    {
+        float distance = Vector2.Distance(player, target);
+
+        Debug.Log("MELEE DISTANCE: " + distance);
+
+        return distance <= maxDistance;
+    }
+
+    private bool IsInRange(Vector2Int player, Vector2Int target, int maxRange)
+    {
+        float distance = Vector2.Distance(player, target);
+
+        Debug.Log("RANGE DISTANCE: " + distance);
+
+        return distance > 1 && distance <= maxRange;
+    }
+
+    */
 
     public void StoreCharacterPosition(int turn)
     {
