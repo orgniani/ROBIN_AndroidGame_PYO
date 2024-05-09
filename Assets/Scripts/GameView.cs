@@ -12,8 +12,6 @@ public class GameView : MonoBehaviour
     private GameObject player;
     private List<GameObject> playerObjects = new List<GameObject>();
 
-    [SerializeField] private TurnManager turnManager;
-
     private List<List<GameObject>> grid;
 
     public void SetPlayers(List<GameObject> players)

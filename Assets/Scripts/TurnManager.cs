@@ -29,6 +29,9 @@ public class TurnManager : MonoBehaviour
         gameView.SetCurrentPlayer(player.gameObject);
         gameView.SetPlayers(players.ConvertAll(p => p.gameObject));
 
+        menuController.SetCurrentPlayer(player);
+        menuController.SetPlayers(players);
+
         playerCounter = players.Count;
 
         playerDeadFlags = new bool[players.Count];
@@ -116,7 +119,9 @@ public class TurnManager : MonoBehaviour
     private void UpdateCharacter()
     {
         player = players[turn - 1];
+
         gameView.SetCurrentPlayer(player.gameObject);
+        menuController.SetCurrentPlayer(player);
     }
 
     private IEnumerator WaitForMovement()

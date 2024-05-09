@@ -15,10 +15,9 @@ public class Player : MonoBehaviour
     [SerializeField] private bool canRangeAttack = false;
 
     [SerializeField] private GameObject icon;
+    [SerializeField] private Transform statBox;
     [SerializeField] private HealthController HP;
 
-
-    private int playerNumber;
 
     private void OnEnable()
     {
@@ -68,6 +67,11 @@ public class Player : MonoBehaviour
     public bool CanRangeAttack()
     {
         return canRangeAttack;
+    }
+
+    public Vector2 GetStatBoxPosition()
+    {
+        return statBox.position;
     }
 
     public void SetIconActive(bool active)

@@ -286,9 +286,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ee2bf4db1672ed94cb1422bd320ab8ee, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  player: {fileID: 5699203832373886038}
   turnManager: {fileID: 2021190549}
   rangeButton: {fileID: 1931101388}
+  border: {fileID: 910567074}
+  meleeDistance: 1
   chooseAction: 0
 --- !u!4 &62919338
 Transform:
@@ -586,7 +587,6 @@ MonoBehaviour:
   - {fileID: 3337749285637055757, guid: 01904e16a02d643feb9fc3f6b8f4fe37, type: 3}
   - {fileID: 3406136864360646977, guid: 66128722ec3999946b4cb7776c9c9673, type: 3}
   - {fileID: 4217737486099431880, guid: 1004020e985b244aebc82007ac08f6ab, type: 3}
-  turnManager: {fileID: 2021190549}
 --- !u!1 &261438453
 GameObject:
   m_ObjectHideFlags: 0
@@ -599,7 +599,6 @@ GameObject:
   - component: {fileID: 261438457}
   - component: {fileID: 261438456}
   - component: {fileID: 261438455}
-  - component: {fileID: 261438458}
   m_Layer: 5
   m_Name: MeleeAttackButton
   m_TagString: Untagged
@@ -683,18 +682,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 261438458}
-        m_TargetAssemblyTypeName: UIActionButton, Assembly-CSharp
-        m_MethodName: OnMeleeAttack
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
 --- !u!114 &261438456
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -733,25 +720,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 261438453}
   m_CullTransparentMesh: 1
---- !u!114 &261438458
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 261438453}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 93c9cbf79bd00494b959cc702cbc9c0d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  player: {fileID: 5699203832373886038}
-  menuController: {fileID: 62919337}
-  meleeDistance: 1
-  players:
-  - {fileID: 5699203832373886038}
-  - {fileID: 2938056019294661237}
-  - {fileID: 4163245702975569312}
 --- !u!1 &302346541
 GameObject:
   m_ObjectHideFlags: 0
@@ -1397,7 +1365,6 @@ GameObject:
   - component: {fileID: 459472300}
   - component: {fileID: 459472299}
   - component: {fileID: 459472298}
-  - component: {fileID: 459472301}
   m_Layer: 5
   m_Name: HealButton
   m_TagString: Untagged
@@ -1481,18 +1448,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 459472301}
-        m_TargetAssemblyTypeName: UIActionButton, Assembly-CSharp
-        m_MethodName: OnHeal
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
 --- !u!114 &459472299
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1531,25 +1486,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 459472296}
   m_CullTransparentMesh: 1
---- !u!114 &459472301
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 459472296}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 93c9cbf79bd00494b959cc702cbc9c0d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  player: {fileID: 5699203832373886038}
-  menuController: {fileID: 62919337}
-  meleeDistance: 1
-  players:
-  - {fileID: 5699203832373886038}
-  - {fileID: 2938056019294661237}
-  - {fileID: 4163245702975569312}
 --- !u!1 &465458884
 GameObject:
   m_ObjectHideFlags: 0
@@ -2716,8 +2652,8 @@ RectTransform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
-  - {fileID: 1281632536}
   - {fileID: 841252575}
+  - {fileID: 1281632536}
   - {fileID: 465458885}
   m_Father: {fileID: 1132824263}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -3672,7 +3608,6 @@ GameObject:
   - component: {fileID: 1931101392}
   - component: {fileID: 1931101391}
   - component: {fileID: 1931101390}
-  - component: {fileID: 1931101393}
   m_Layer: 5
   m_Name: RangeAttackButton
   m_TagString: Untagged
@@ -3756,18 +3691,6 @@ MonoBehaviour:
           m_StringArgument: 
           m_BoolArgument: 0
         m_CallState: 2
-      - m_Target: {fileID: 1931101393}
-        m_TargetAssemblyTypeName: UIActionButton, Assembly-CSharp
-        m_MethodName: OnRangeAttack
-        m_Mode: 1
-        m_Arguments:
-          m_ObjectArgument: {fileID: 0}
-          m_ObjectArgumentAssemblyTypeName: UnityEngine.Object, UnityEngine
-          m_IntArgument: 0
-          m_FloatArgument: 0
-          m_StringArgument: 
-          m_BoolArgument: 0
-        m_CallState: 2
 --- !u!114 &1931101391
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3806,25 +3729,6 @@ CanvasRenderer:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1931101388}
   m_CullTransparentMesh: 1
---- !u!114 &1931101393
-MonoBehaviour:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1931101388}
-  m_Enabled: 1
-  m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 93c9cbf79bd00494b959cc702cbc9c0d, type: 3}
-  m_Name: 
-  m_EditorClassIdentifier: 
-  player: {fileID: 5699203832373886038}
-  menuController: {fileID: 62919337}
-  meleeDistance: 1
-  players:
-  - {fileID: 5699203832373886038}
-  - {fileID: 2938056019294661237}
-  - {fileID: 4163245702975569312}
 --- !u!1 &2006314516
 GameObject:
   m_ObjectHideFlags: 0
@@ -4416,11 +4320,12 @@ MonoBehaviour:
   rangeDamage: 1
   meleeDamage: 3
   cureHP: 0
-  maxRangeAttackDistance: 0
+  maxRangeAttackDistance: 1.55
   maxRangeHealDistance: 0
   canOnlyHealSelf: 0
-  canRangeAttack: 0
+  canRangeAttack: 1
   icon: {fileID: 1161918127}
+  statBox: {fileID: 0}
   HP: {fileID: 2669451484757793149}
 --- !u!114 &2669451484757793149
 MonoBehaviour:
@@ -4546,11 +4451,12 @@ MonoBehaviour:
   rangeDamage: 2
   meleeDamage: 2
   cureHP: 5
-  maxRangeAttackDistance: 0
-  maxRangeHealDistance: 0
+  maxRangeAttackDistance: 1.55
+  maxRangeHealDistance: 1.3
   canOnlyHealSelf: 0
-  canRangeAttack: 0
+  canRangeAttack: 1
   icon: {fileID: 119941491}
+  statBox: {fileID: 2062916504}
   HP: {fileID: 2938056019294661236}
 --- !u!4 &4163245702975569310 stripped
 Transform:
@@ -4587,11 +4493,12 @@ MonoBehaviour:
   rangeDamage: 3
   meleeDamage: 1
   cureHP: 2
-  maxRangeAttackDistance: 0
+  maxRangeAttackDistance: 10
   maxRangeHealDistance: 0
-  canOnlyHealSelf: 0
-  canRangeAttack: 0
+  canOnlyHealSelf: 1
+  canRangeAttack: 1
   icon: {fileID: 388702314}
+  statBox: {fileID: 84609113}
   HP: {fileID: 4163245702975569311}
 --- !u!4 &5699203832373886036 stripped
 Transform:
@@ -4625,14 +4532,15 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxSpeed: 3
-  rangeDamage: 1
+  rangeDamage: 0
   meleeDamage: 5
   cureHP: 2
-  maxRangeAttackDistance: 1.55
-  maxRangeHealDistance: 1.3
+  maxRangeAttackDistance: 0
+  maxRangeHealDistance: 0
   canOnlyHealSelf: 1
   canRangeAttack: 0
   icon: {fileID: 770019258}
+  statBox: {fileID: 1322544971}
   HP: {fileID: 5699203832373886037}
 --- !u!4 &7376742351955626984 stripped
 Transform:
@@ -4656,11 +4564,12 @@ MonoBehaviour:
   rangeDamage: 1
   meleeDamage: 3
   cureHP: 0
-  maxRangeAttackDistance: 0
+  maxRangeAttackDistance: 1.55
   maxRangeHealDistance: 0
   canOnlyHealSelf: 0
-  canRangeAttack: 0
+  canRangeAttack: 1
   icon: {fileID: 1161918127}
+  statBox: {fileID: 0}
   HP: {fileID: 7376742351955626986}
 --- !u!114 &7376742351955626986
 MonoBehaviour:
