@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -9,16 +10,20 @@ public class TurnManager : MonoBehaviour
     [SerializeField] private List<HealthController> playersHP;
     private bool[] playerDeadFlags;
 
-    private int playerCounter = 0;
-
     [SerializeField] private ActionMenuController menuController;
     [SerializeField] private GameView gameView;
+
+    [SerializeField] private int enemiesAmount = 2;
+    [SerializeField] private int playersAmount = 3;
+    private int playerCounter = 3;
 
     private int turn = 1;
     public bool gameOver = false;
 
-    private int maxTurns = 3;
+    [SerializeField] private int maxTurns = 3;
     public bool waitingForMovement = true;
+
+    public bool isEnemyTurn = false;
 
     public GameController gameController;
 
@@ -31,8 +36,6 @@ public class TurnManager : MonoBehaviour
 
         menuController.SetCurrentPlayer(player);
         menuController.SetPlayers(players);
-
-        playerCounter = players.Count;
 
         playerDeadFlags = new bool[players.Count];
 
@@ -59,6 +62,18 @@ public class TurnManager : MonoBehaviour
                 Debug.Log("Player " + (i + 1) + " has died.");
                 playerDeadFlags[i] = true;
 
+                if (i == 4 || i == 5)
+                {
+                    enemiesAmount--;
+                    Debug.Log("ENEMIES: " + enemiesAmount);
+                }
+
+                else
+                {
+                    playersAmount--;
+                    Debug.Log("PLAYERS: " + playersAmount);
+                }
+
                 gameController.RemovePositionAfterDeath(i, turn);
             }
         }
@@ -69,27 +84,51 @@ public class TurnManager : MonoBehaviour
     private void Start()
     {
         gameController = new GameController(gameView, new MapBuilder());
-        StartCoroutine(PlayTurn());
+        StartCoroutine(PlayerTurn());
     }
 
     private void Update()
     {
+        //if (!waitingForMovement || gameOver) return;
         if (!waitingForMovement) return;
         if (gameOver) return;
 
-        if (Input.GetKeyDown(KeyCode.LeftArrow) || Input.GetKeyDown(KeyCode.A))
-            gameController.MoveCharacterLeft();
-        else if (Input.GetKeyDown(KeyCode.RightArrow) || Input.GetKeyDown(KeyCode.D))
-            gameController.MoveCharacterRight();
-        else if (Input.GetKeyDown(KeyCode.UpArrow) || Input.GetKeyDown(KeyCode.W))
-            gameController.MoveCharacterUp();
-        else if (Input.GetKeyDown(KeyCode.DownArrow) || Input.GetKeyDown(KeyCode.S))
-            gameController.MoveCharacterDown();
+        Dictionary<KeyCode, Action> movementActions = new Dictionary<KeyCode, Action>
+        {
+        {KeyCode.LeftArrow, gameController.MoveCharacterLeft},
+        {KeyCode.A, gameController.MoveCharacterLeft},
+        {KeyCode.RightArrow, gameController.MoveCharacterRight},
+        {KeyCode.D, gameController.MoveCharacterRight},
+        {KeyCode.UpArrow, gameController.MoveCharacterUp},
+        {KeyCode.W, gameController.MoveCharacterUp},
+        {KeyCode.DownArrow, gameController.MoveCharacterDown},
+        {KeyCode.S, gameController.MoveCharacterDown}
+        };
+
+        if (!isEnemyTurn)
+        {
+            foreach (var kvp in movementActions)
+            {
+                if (Input.GetKeyDown(kvp.Key))
+                {
+                    kvp.Value.Invoke();
+                    break;
+                }
+            }
+        }
+
+        else
+        {
+            gameController.MoveEnemyRandomly();
+        }
     }
 
-    private IEnumerator PlayTurn()
+    private IEnumerator PlayerTurn()
     {
         if (gameOver) yield break;
+
+        if(turn == 4) isEnemyTurn = true;
+        if (turn == 1) isEnemyTurn = false;
 
         bool currentPlayerIsDead = IsPlayerDead(turn);
 
@@ -108,7 +147,7 @@ public class TurnManager : MonoBehaviour
         ShowWinFeedback();
         turn = (turn % maxTurns) + 1;
 
-        StartCoroutine(PlayTurn());
+        StartCoroutine(PlayerTurn());
     }
 
     private bool IsPlayerDead(int playerTurn)
@@ -154,5 +193,12 @@ public class TurnManager : MonoBehaviour
             Debug.Log("YOU WIN!!!");
             gameOver = true;
         }
+
+        else if (playersAmount < 3 && enemiesAmount > 0)
+        {
+            Debug.Log("EVERYBODY LOSES!!!");
+            gameOver = true;
+        }
+
     }
 }

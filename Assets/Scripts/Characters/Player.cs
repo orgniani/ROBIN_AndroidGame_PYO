@@ -59,6 +59,11 @@ public class Player : MonoBehaviour
         targetHP.CureHP(cureHP);
     }
 
+    public HealthController GetHP()
+    {
+        return HP;
+    }
+
     public bool GetCanOnlyHealSelf()
     {
         return canOnlyHealSelf;

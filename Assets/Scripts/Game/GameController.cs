@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+using Random = UnityEngine.Random;
 
 public class GameController
 {
@@ -9,6 +10,8 @@ public class GameController
     private Vector2Int healerPosition;
     private Vector2Int rangerPosition;
     private Vector2Int fighterPosition;
+    private Vector2Int enemy1Position;
+    private Vector2Int enemy2Position;
 
     private List<Vector2Int> positions;
 
@@ -28,7 +31,10 @@ public class GameController
         healerPosition = mapBuilder.GetStartPosition();
         rangerPosition = mapBuilder.GetStartPosition();
 
-        positions = new List<Vector2Int>() { fighterPosition , healerPosition, rangerPosition };
+        enemy1Position = mapBuilder.GetStartPosition();
+        enemy2Position = mapBuilder.GetStartPosition();
+
+        positions = new List<Vector2Int>() { fighterPosition , healerPosition, rangerPosition, enemy1Position, enemy2Position };
         characterPosition = positions[0];
 
         gameView.InitializeMap(map);
@@ -37,6 +43,8 @@ public class GameController
         map[fighterPosition.y][fighterPosition.x] = TerrainType.CHARACTER;
         map[healerPosition.y][healerPosition.x] = TerrainType.CHARACTER;
         map[rangerPosition.y][rangerPosition.x] = TerrainType.CHARACTER;
+        map[enemy1Position.y][enemy1Position.x] = TerrainType.CHARACTER;
+        map[enemy2Position.y][enemy2Position.x] = TerrainType.CHARACTER;
     }
 
     public void MoveCharacterRight()
@@ -68,6 +76,27 @@ public class GameController
         if (IsValidPosition(characterPosition.x, characterPosition.y - 1))
         {
             MoveCharacterToPosition(characterPosition.x, characterPosition.y - 1);
+        }
+    }
+
+    public void MoveEnemyRandomly()
+    {
+        int randomDirection = Random.Range(0, 4);
+
+        switch (randomDirection)
+        {
+            case 0:
+                MoveCharacterRight();
+                break;
+            case 1:
+                MoveCharacterLeft();
+                break;
+            case 2:
+                MoveCharacterUp();
+                break;
+            case 3:
+                MoveCharacterDown();
+                break;
         }
     }
 
@@ -106,14 +135,6 @@ public class GameController
 
         gameView.MovePlayerToCell(characterPosition.x, characterPosition.y);
         speed++;
-
-        CheckIfWin();
-    }
-
-    private void CheckIfWin()
-    {
-        //if (map[characterPosition.y][characterPosition.x] == TerrainType.FINISH)
-          //  gameView.ShowWinFeedback();
     }
 
     private bool IsValidPosition(int x, int y)
