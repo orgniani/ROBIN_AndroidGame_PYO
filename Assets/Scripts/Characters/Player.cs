@@ -13,10 +13,14 @@ public class Player : MonoBehaviour
 
     [SerializeField] private bool canOnlyHealSelf = false;
     [SerializeField] private bool canRangeAttack = false;
+    [SerializeField] private bool isEnemy = false;
 
     [SerializeField] private GameObject icon;
     [SerializeField] private Transform statBox;
     [SerializeField] private HealthController HP;
+
+
+    public bool IsEnemy => isEnemy;
 
 
     private void OnEnable()

@@ -298,6 +298,7 @@ MonoBehaviour:
   - {fileID: 261438455}
   - {fileID: 1931101390}
   meleeDistance: 1
+  enableLogs: 0
   chooseAction: 0
 --- !u!4 &62919338
 Transform:
@@ -4209,10 +4210,13 @@ MonoBehaviour:
   - {fileID: 7376742351955626986}
   menuController: {fileID: 62919337}
   gameView: {fileID: 159470907}
+  enemiesAmount: 2
+  playersAmount: 3
   gameOver: 0
   maxTurns: 5
   waitingForMovement: 1
   isEnemyTurn: 0
+  enableLogs: 0
 --- !u!4 &2021190550
 Transform:
   m_ObjectHideFlags: 0
@@ -4767,6 +4771,7 @@ MonoBehaviour:
   maxRangeHealDistance: 0
   canOnlyHealSelf: 0
   canRangeAttack: 1
+  isEnemy: 1
   icon: {fileID: 1161918127}
   statBox: {fileID: 777754471}
   HP: {fileID: 2669451484757793149}
@@ -4898,6 +4903,7 @@ MonoBehaviour:
   maxRangeHealDistance: 1.3
   canOnlyHealSelf: 0
   canRangeAttack: 1
+  isEnemy: 0
   icon: {fileID: 119941491}
   statBox: {fileID: 2062916504}
   HP: {fileID: 2938056019294661236}
@@ -4940,6 +4946,7 @@ MonoBehaviour:
   maxRangeHealDistance: 0
   canOnlyHealSelf: 1
   canRangeAttack: 1
+  isEnemy: 0
   icon: {fileID: 388702314}
   statBox: {fileID: 84609113}
   HP: {fileID: 4163245702975569311}
@@ -4982,6 +4989,7 @@ MonoBehaviour:
   maxRangeHealDistance: 0
   canOnlyHealSelf: 1
   canRangeAttack: 0
+  isEnemy: 0
   icon: {fileID: 770019258}
   statBox: {fileID: 1322544971}
   HP: {fileID: 5699203832373886037}
@@ -5011,6 +5019,7 @@ MonoBehaviour:
   maxRangeHealDistance: 0
   canOnlyHealSelf: 0
   canRangeAttack: 1
+  isEnemy: 1
   icon: {fileID: 1289176955}
   statBox: {fileID: 468331511}
   HP: {fileID: 7376742351955626986}

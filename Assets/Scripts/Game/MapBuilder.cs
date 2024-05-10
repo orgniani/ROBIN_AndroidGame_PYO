@@ -7,8 +7,6 @@ public class MapBuilder
 
     public virtual Vector2Int GetStartPosition()
     {
-        //return GetRandomPosition();
-
         Vector2Int position;
         do
         {

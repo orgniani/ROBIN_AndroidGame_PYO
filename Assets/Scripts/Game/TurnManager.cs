@@ -8,6 +8,7 @@ public class TurnManager : MonoBehaviour
     private Player player;
     [SerializeField] private List<Player> players;
     [SerializeField] private List<HealthController> playersHP;
+
     private bool[] playerDeadFlags;
 
     [SerializeField] private ActionMenuController menuController;
@@ -15,7 +16,7 @@ public class TurnManager : MonoBehaviour
 
     [SerializeField] private int enemiesAmount = 2;
     [SerializeField] private int playersAmount = 3;
-    private int playerCounter = 3;
+    private int playerCounter;
 
     private int turn = 1;
     public bool gameOver = false;
@@ -24,6 +25,8 @@ public class TurnManager : MonoBehaviour
     public bool waitingForMovement = true;
 
     public bool isEnemyTurn = false;
+
+    [SerializeField] private bool enableLogs = false;
 
     public GameController gameController;
 
@@ -36,6 +39,8 @@ public class TurnManager : MonoBehaviour
 
         menuController.SetCurrentPlayer(player);
         menuController.SetPlayers(players);
+
+        playerCounter = players.Count;
 
         playerDeadFlags = new bool[players.Count];
 
@@ -59,19 +64,25 @@ public class TurnManager : MonoBehaviour
         {
             if (playersHP[i].Health <= 0)
             {
-                Debug.Log("Player " + (i + 1) + " has died.");
+                if(enableLogs)
+                    Debug.Log("Player " + (i + 1) + " has died.");
+
                 playerDeadFlags[i] = true;
 
-                if (i == 4 || i == 5)
+                if (i == 3 || i == 4)
                 {
                     enemiesAmount--;
-                    Debug.Log("ENEMIES: " + enemiesAmount);
+                    CheckIfGameOver();
+
+                    if (enableLogs)
+                        Debug.Log("ENEMIES: " + enemiesAmount);
                 }
 
                 else
                 {
                     playersAmount--;
-                    Debug.Log("PLAYERS: " + playersAmount);
+                    if (enableLogs)
+                        Debug.Log("PLAYERS: " + playersAmount);
                 }
 
                 gameController.RemovePositionAfterDeath(i, turn);
@@ -144,7 +155,7 @@ public class TurnManager : MonoBehaviour
             gameController.StoreCharacterPosition(turn);
         }
 
-        ShowWinFeedback();
+        CheckIfGameOver();
         turn = (turn % maxTurns) + 1;
 
         StartCoroutine(PlayerTurn());
@@ -186,7 +197,7 @@ public class TurnManager : MonoBehaviour
         menuController.chooseAction = false;
     }
 
-    public void ShowWinFeedback()
+    public void CheckIfGameOver()
     {
         if (playerCounter == 1)
         {
@@ -194,7 +205,7 @@ public class TurnManager : MonoBehaviour
             gameOver = true;
         }
 
-        else if (playersAmount < 3 && enemiesAmount > 0)
+        else if (playersAmount < 3 && enemiesAmount >= 0)
         {
             Debug.Log("EVERYBODY LOSES!!!");
             gameOver = true;

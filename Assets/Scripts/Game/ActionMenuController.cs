@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
+using static Unity.Collections.Unicode;
 using Random = UnityEngine.Random;
 
 public class ActionMenuController : MonoBehaviour
@@ -22,11 +23,15 @@ public class ActionMenuController : MonoBehaviour
 
     [SerializeField] private float meleeDistance = 1;
 
+    [SerializeField] private bool enableLogs = true;
+
     private Button actionButton;
 
     public bool chooseAction = false;
 
     private Coroutine currentActionCoroutine;
+
+    private int round = 1; // DELETE
 
     private HealthController targetHP;
 
@@ -49,6 +54,7 @@ public class ActionMenuController : MonoBehaviour
         {
             border.gameObject.SetActive(false);
             enemyBorder.gameObject.SetActive(true);
+
             enemyBorder.position = currentPlayer.GetStatBoxPosition();
 
             StartCoroutine(EnemyAction());
@@ -58,15 +64,11 @@ public class ActionMenuController : MonoBehaviour
         {
             border.gameObject.SetActive(true);
             enemyBorder.gameObject.SetActive(false);
+
             border.position = currentPlayer.GetStatBoxPosition();
+
+            rangeButton.SetActive(currentPlayer.CanRangeAttack());
         }
-    }
-
-    private void Update()
-    {
-        if (currentPlayer == null) return;
-
-        rangeButton.SetActive(currentPlayer.CanRangeAttack());
     }
 
     public void OnRangeAttack()
@@ -103,6 +105,7 @@ public class ActionMenuController : MonoBehaviour
     private IEnumerator ActionSequence(Action<HealthController> action)
     {
         targetHP = null;
+        turnManager.waitingForMovement = false;
 
         while (targetHP == null)
         {
@@ -111,17 +114,17 @@ public class ActionMenuController : MonoBehaviour
 
         action(targetHP);
         chooseAction = true;
-        turnManager.waitingForMovement = false;
+        //turnManager.waitingForMovement = false;
 
         currentActionCoroutine = null;
     }
 
     private IEnumerator EnemyAction()
     {
-        while (turnManager.waitingForMovement)
-        {
+        float timeoutDuration = 3f;
+        float startTime = Time.time;
+
             yield return new WaitForSeconds(1);
-        }
 
         turnManager.waitingForMovement = false;
 
@@ -129,13 +132,26 @@ public class ActionMenuController : MonoBehaviour
 
         ChooseRandomAction();
 
-        while (targetHP == null)
+        yield return WaitUntilTargetSelectedOrTimeout(timeoutDuration, startTime);
+        yield return new WaitForSeconds(1);
+    }
+
+    private IEnumerator WaitUntilTargetSelectedOrTimeout(float duration, float startTime)
+    {
+        while (targetHP == null && Time.time - startTime < duration)
         {
             ChooseRandomTarget();
-            yield return new WaitForSeconds(1);
+            yield return new WaitForEndOfFrame();
         }
 
-        yield return new WaitForSeconds(1);
+        if (targetHP == null)
+        {
+            if(enableLogs)
+                Debug.Log("Target selection timed out.");
+
+            chooseAction = true;
+            currentActionCoroutine = null;
+        }
     }
 
     public void OnChooseTarget(HealthController targetHP)
@@ -159,23 +175,16 @@ public class ActionMenuController : MonoBehaviour
         int randomIndex = Random.Range(0, targetButtons.Count);
         Button randomButton = targetButtons[randomIndex];
 
-        Player targetPlayer = allPlayers[randomIndex];
-        bool isTargetInRange;
-
-        if (actionButton.name == rangeButton.name)
+        if (randomButton.gameObject.activeSelf)
         {
-            isTargetInRange = IsInRange(currentPlayer.transform.position, targetPlayer.transform.position, currentPlayer.GetMaxAttackRange());
-        }
+            round++;
 
-        else
-        {
-            isTargetInRange = IsClose(currentPlayer.transform.position, targetPlayer.transform.position, meleeDistance);
-        }
+            if (enableLogs)
+            {
+                Debug.Log("ROUND: " + round + " - " + currentPlayer.name + " has Chosen Action Button: " + actionButton.name);
+                Debug.Log("ROUND: " + round + " - " + currentPlayer.name + " has Chosen Target Button: " + randomButton.name);
+            }
 
-        if (isTargetInRange)
-        {
-            Debug.Log(currentPlayer.name + " has Chosen Action Button: " + actionButton.name);
-            Debug.Log(currentPlayer.name + " has Chosen Target Button: " + randomButton.name);
             randomButton.onClick.Invoke();
         }
 
@@ -184,7 +193,6 @@ public class ActionMenuController : MonoBehaviour
             ChooseRandomAction();
         }
     }
-
 
     private void ResetIcons()
     {
@@ -212,6 +220,11 @@ public class ActionMenuController : MonoBehaviour
         {
             bool inHealRange = IsClose(currentPlayer.transform.position, targetPlayer.transform.position, currentPlayer.GetMaxHealRange()) && !currentPlayer.GetCanOnlyHealSelf();
             targetPlayer.SetIconActive(inHealRange);
+
+            if (targetPlayer.IsEnemy)
+            {
+                targetPlayer.SetIconActive(false);
+            }
         }
 
         currentPlayer.SetIconActive(true);
