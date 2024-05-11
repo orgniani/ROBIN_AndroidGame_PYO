@@ -3,13 +3,13 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class TurnManager : MonoBehaviour
+public class GameManager : MonoBehaviour
 {
     [Header("Players")]
     [SerializeField] private List<Player> players;
 
     [Header("References")]
-    [SerializeField] private ActionController menuController;
+    [SerializeField] private ActionController actionController;
     [SerializeField] private GameView gameView;
 
     [Header("Logs")]
@@ -19,11 +19,11 @@ public class TurnManager : MonoBehaviour
 
     private bool[] playerDeadFlags;
 
-    private int playerCounter;
-    private int enemiesCounter;
+    private int playerCounter = 0;
+    private int enemiesCounter = 0;
 
     private int turn = 1;
-    private int maxTurns;
+    private int maxTurns = 0;
 
     private bool gameOver = false;
 
@@ -33,13 +33,48 @@ public class TurnManager : MonoBehaviour
 
     private void Awake()
     {
+        if (!actionController)
+        {
+            Debug.LogError($"{name}: {nameof(actionController)} is null!" +
+                           $"\nDisabling object to avoid errors.");
+            enabled = false;
+            return;
+        }
+
+        if (!gameView)
+        {
+            Debug.LogError($"{name}: {nameof(gameView)} is null!" +
+                           $"\nDisabling object to avoid errors.");
+            enabled = false;
+            return;
+        }
+
+        if (players.Count <= 0)
+        {
+            Debug.LogError($"{name}: There are no players in the players list!" +
+               $"\nDisabling object to avoid errors.");
+            enabled = false;
+            return;
+        }
+    }
+
+    private void OnEnable()
+    {
+        for (int i = 0; i < players.Count; i++)
+        {
+            players[i].onDead += KillCounter;
+        }
+    }
+
+    private void Start()
+    {
         currentPlayer = players[0];
 
         gameView.SetCurrentPlayer(currentPlayer.gameObject);
         gameView.SetPlayers(players.ConvertAll(p => p.gameObject));
 
-        menuController.Initialize(players);
-        menuController.SetCurrentPlayer(currentPlayer);
+        actionController.Initialize(players);
+        actionController.SetCurrentPlayer(currentPlayer);
 
         maxTurns = players.Count;
 
@@ -54,18 +89,7 @@ public class TurnManager : MonoBehaviour
         }
 
         IsWaitingForMovement = true;
-    }
 
-    private void OnEnable()
-    {
-        for (int i = 0; i < players.Count; i++)
-        {
-            players[i].onDead += KillCounter;
-        }
-    }
-
-    private void Start()
-    {
         movementController = new MovementController(gameView, new MapBuilder(), players.Count);
         StartCoroutine(PlayerTurn());
     }
@@ -73,6 +97,12 @@ public class TurnManager : MonoBehaviour
     private void Update()
     {
         if (!IsWaitingForMovement || gameOver) return;
+
+        if (currentPlayer.IsEnemy)
+        {
+            movementController.MoveEnemyRandomly();
+            return;
+        }
 
         Dictionary<KeyCode, Action> movementActions = new Dictionary<KeyCode, Action>
         {
@@ -86,21 +116,14 @@ public class TurnManager : MonoBehaviour
         {KeyCode.S, movementController.MoveCharacterDown}
         };
 
-        if (!currentPlayer.IsEnemy)
+        foreach (var kvp in movementActions)
         {
-            foreach (var kvp in movementActions)
+            if (Input.GetKeyDown(kvp.Key))
             {
-                if (Input.GetKeyDown(kvp.Key))
-                {
-                    kvp.Value.Invoke();
-                    break;
-                }
+                kvp.Value.Invoke();
+                break;
             }
-
-            return;
         }
-
-        movementController.MoveEnemyRandomly();
     }
 
     private IEnumerator PlayerTurn()
@@ -137,7 +160,7 @@ public class TurnManager : MonoBehaviour
         currentPlayer = players[turn - 1];
 
         gameView.SetCurrentPlayer(currentPlayer.gameObject);
-        menuController.SetCurrentPlayer(currentPlayer);
+        actionController.SetCurrentPlayer(currentPlayer);
     }
 
     private IEnumerator WaitForMovement()
@@ -154,7 +177,7 @@ public class TurnManager : MonoBehaviour
 
     private IEnumerator WaitForAction()
     {
-        while (!menuController.HasChosenAction)
+        while (!actionController.HasChosenAction)
         {
             yield return new WaitForEndOfFrame();
         }
@@ -167,7 +190,7 @@ public class TurnManager : MonoBehaviour
             Debug.Log("PLAYER " + turn + " WINS!!!");
             gameOver = true;
 
-            menuController.gameObject.SetActive(false);
+            actionController.gameObject.SetActive(false);
         }
 
         else if (playerCounter < 3 && enemiesCounter > 0)
@@ -175,7 +198,7 @@ public class TurnManager : MonoBehaviour
             Debug.Log("EVERYBODY LOSES!!!");
             gameOver = true;
 
-            menuController.gameObject.SetActive(false);
+            actionController.gameObject.SetActive(false);
         }
     }
 

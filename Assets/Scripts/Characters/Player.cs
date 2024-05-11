@@ -32,6 +32,25 @@ public class Player : MonoBehaviour
 
     public int Health => health;
 
+    private void Awake()
+    {
+        if (!icon)
+        {
+            Debug.LogError($"{name}: {nameof(icon)} is null!" +
+                           $"\nDisabling object to avoid errors.");
+            enabled = false;
+            return;
+        }
+
+        if (!statBox)
+        {
+            Debug.LogError($"{name}: {nameof(statBox)} is null!" +
+                           $"\nDisabling object to avoid errors.");
+            enabled = false;
+            return;
+        }
+    }
+
     public int GetMaxSpeed()
     {
         return maxSpeed;

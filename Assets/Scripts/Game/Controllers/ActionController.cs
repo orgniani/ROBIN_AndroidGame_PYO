@@ -8,7 +8,7 @@ using Random = UnityEngine.Random;
 public class ActionController : MonoBehaviour
 {
     [Header("References")]
-    [SerializeField] private TurnManager turnManager;
+    [SerializeField] private GameManager turnManager;
     [SerializeField] private GameObject rangeButton;
 
     [Space(10)]
@@ -38,6 +38,57 @@ public class ActionController : MonoBehaviour
     private int round = 0;
 
     public bool HasChosenAction { private set; get; }
+
+    private void Awake()
+    {
+        if (!turnManager)
+        {
+            Debug.LogError($"{name}: {nameof(turnManager)} is null!" +
+                           $"\nDisabling object to avoid errors.");
+            enabled = false;
+            return;
+        }
+
+        if (!rangeButton)
+        {
+            Debug.LogError($"{name}: {nameof(rangeButton)} is null!" +
+                           $"\nDisabling object to avoid errors.");
+            enabled = false;
+            return;
+        }
+
+        if (!border)
+        {
+            Debug.LogError($"{name}: {nameof(border)} is null!" +
+                           $"\nDisabling object to avoid errors.");
+            enabled = false;
+            return;
+        }
+
+        if (!enemyBorder)
+        {
+            Debug.LogError($"{name}: {nameof(enemyBorder)} is null!" +
+                           $"\nDisabling object to avoid errors.");
+            enabled = false;
+            return;
+        }
+
+        if (enemyActionButtons.Count <= 0)
+        {
+            Debug.LogError($"{name}: There are no action buttons in the action buttons list!" +
+                           $"\nDisabling object to avoid errors.");
+            enabled = false;
+            return;
+        }
+
+        if (enemyTargetButtons.Count <= 0)
+        {
+            Debug.LogError($"{name}: There are no target buttons in the target buttons list!" +
+                           $"\nDisabling object to avoid errors.");
+            enabled = false;
+            return;
+        }
+    }
 
     public void Initialize(List<Player> players)
     {

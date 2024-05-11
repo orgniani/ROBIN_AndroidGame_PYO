@@ -6,8 +6,6 @@ public class IconSetter
     private List<Player> allPlayers = new List<Player>();
     private float meleeDistance;
 
-    public int Speed { private set; get; }
-
     public IconSetter(List<Player> allPlayers, float meleeDistance)
     {
         this.allPlayers = allPlayers;

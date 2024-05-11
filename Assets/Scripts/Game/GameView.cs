@@ -6,9 +6,9 @@ public class GameView : MonoBehaviour
     [Header("Grid Parameters")]
     [SerializeField] private float gridCellSize = 1f;
     [SerializeField] private float spaceBetweenCells = 0.1f;
+    [SerializeField] private string prefabName = "grass";
 
-    [Header("Grid Reference")]
-    [SerializeField] private GameObject grassPrefabs;
+    private GameObject grassPrefab;
 
     private GameObject player;
     private List<GameObject> playerObjects = new List<GameObject>();
@@ -54,10 +54,11 @@ public class GameView : MonoBehaviour
                 var xPos = column * (gridCellSize + spaceBetweenCells);
                 var yPos = row * (gridCellSize + spaceBetweenCells);
 
-                var gridCell = Instantiate(grassPrefabs, transform);
+                var reference = Resources.Load<GameObject>("Prefabs/" + prefabName);
+                grassPrefab = Instantiate(reference, transform);
 
-                gridCell.transform.localPosition = new Vector3(xPos, yPos, 1);
-                gridRow.Add(gridCell);
+                grassPrefab.transform.localPosition = new Vector3(xPos, yPos, 1);
+                gridRow.Add(grassPrefab);
             }
             grid.Add(gridRow);
         }
