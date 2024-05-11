@@ -5,118 +5,88 @@ using UnityEngine;
 
 public class TurnManager : MonoBehaviour
 {
-    private Player player;
+    [Header("Players")]
     [SerializeField] private List<Player> players;
-    [SerializeField] private List<HealthController> playersHP;
+
+    [Header("References")]
+    [SerializeField] private ActionController menuController;
+    [SerializeField] private GameView gameView;
+
+    [Header("Logs")]
+    [SerializeField] private bool enableLogs = false;
+
+    private Player currentPlayer;
 
     private bool[] playerDeadFlags;
 
-    [SerializeField] private ActionMenuController menuController;
-    [SerializeField] private GameView gameView;
-
-    [SerializeField] private int enemiesAmount = 2;
-    [SerializeField] private int playersAmount = 3;
     private int playerCounter;
+    private int enemiesCounter;
 
     private int turn = 1;
-    public bool gameOver = false;
+    private int maxTurns;
 
-    [SerializeField] private int maxTurns = 3;
-    public bool waitingForMovement = true;
+    private bool gameOver = false;
 
-    public bool isEnemyTurn = false;
+    private MovementController movementController;
 
-    [SerializeField] private bool enableLogs = false;
-
-    public GameController gameController;
+    public bool IsWaitingForMovement { set; get; } 
 
     private void Awake()
     {
-        player = players[0];
+        currentPlayer = players[0];
 
-        gameView.SetCurrentPlayer(player.gameObject);
+        gameView.SetCurrentPlayer(currentPlayer.gameObject);
         gameView.SetPlayers(players.ConvertAll(p => p.gameObject));
 
-        menuController.SetCurrentPlayer(player);
-        menuController.SetPlayers(players);
+        menuController.Initialize(players);
+        menuController.SetCurrentPlayer(currentPlayer);
 
-        playerCounter = players.Count;
+        maxTurns = players.Count;
 
         playerDeadFlags = new bool[players.Count];
 
         for (int i = 0; i < playerDeadFlags.Length; i++)
         {
             playerDeadFlags[i] = false;
+
+            if (players[i].IsEnemy) enemiesCounter++;
+            else playerCounter++;
         }
+
+        IsWaitingForMovement = true;
     }
 
     private void OnEnable()
     {
-        for (int i = playersHP.Count - 1; i >= 0; i--)
+        for (int i = 0; i < players.Count; i++)
         {
-            playersHP[i].onDead += KillCounter;
+            players[i].onDead += KillCounter;
         }
-    }
-
-    private void KillCounter()
-    {
-        for (int i = 0; i < playersHP.Count; i++)
-        {
-            if (playersHP[i].Health <= 0)
-            {
-                if(enableLogs)
-                    Debug.Log("Player " + (i + 1) + " has died.");
-
-                playerDeadFlags[i] = true;
-
-                if (i == 3 || i == 4)
-                {
-                    enemiesAmount--;
-                    CheckIfGameOver();
-
-                    if (enableLogs)
-                        Debug.Log("ENEMIES: " + enemiesAmount);
-                }
-
-                else
-                {
-                    playersAmount--;
-                    if (enableLogs)
-                        Debug.Log("PLAYERS: " + playersAmount);
-                }
-
-                gameController.RemovePositionAfterDeath(i, turn);
-            }
-        }
-
-        playerCounter--;
     }
 
     private void Start()
     {
-        gameController = new GameController(gameView, new MapBuilder());
+        movementController = new MovementController(gameView, new MapBuilder(), players.Count);
         StartCoroutine(PlayerTurn());
     }
 
     private void Update()
     {
-        //if (!waitingForMovement || gameOver) return;
-        if (!waitingForMovement) return;
-        if (gameOver) return;
+        if (!IsWaitingForMovement || gameOver) return;
 
         Dictionary<KeyCode, Action> movementActions = new Dictionary<KeyCode, Action>
         {
-        {KeyCode.LeftArrow, gameController.MoveCharacterLeft},
-        {KeyCode.A, gameController.MoveCharacterLeft},
-        {KeyCode.RightArrow, gameController.MoveCharacterRight},
-        {KeyCode.D, gameController.MoveCharacterRight},
-        {KeyCode.UpArrow, gameController.MoveCharacterUp},
-        {KeyCode.W, gameController.MoveCharacterUp},
-        {KeyCode.DownArrow, gameController.MoveCharacterDown},
-        {KeyCode.S, gameController.MoveCharacterDown}
+        {KeyCode.LeftArrow, movementController.MoveCharacterLeft},
+        {KeyCode.A, movementController.MoveCharacterLeft},
+        {KeyCode.RightArrow, movementController.MoveCharacterRight},
+        {KeyCode.D, movementController.MoveCharacterRight},
+        {KeyCode.UpArrow, movementController.MoveCharacterUp},
+        {KeyCode.W, movementController.MoveCharacterUp},
+        {KeyCode.DownArrow, movementController.MoveCharacterDown},
+        {KeyCode.S, movementController.MoveCharacterDown}
         };
 
-        if (!isEnemyTurn)
+        if (!currentPlayer.IsEnemy)
         {
             foreach (var kvp in movementActions)
             {
@@ -126,20 +96,16 @@ public class TurnManager : MonoBehaviour
                     break;
                 }
             }
+
+            return;
         }
 
-        else
-        {
-            gameController.MoveEnemyRandomly();
-        }
+        movementController.MoveEnemyRandomly();
     }
 
     private IEnumerator PlayerTurn()
     {
         if (gameOver) yield break;
-
-        if(turn == 4) isEnemyTurn = true;
-        if (turn == 1) isEnemyTurn = false;
 
         bool currentPlayerIsDead = IsPlayerDead(turn);
 
@@ -147,12 +113,12 @@ public class TurnManager : MonoBehaviour
         {
             UpdateCharacter();
 
-            gameController.UpdateCharacterPosition(turn);
+            movementController.UpdateCharacterPosition(turn);
 
             yield return WaitForMovement();
             yield return WaitForAction();
 
-            gameController.StoreCharacterPosition(turn);
+            movementController.StoreCharacterPosition(turn);
         }
 
         CheckIfGameOver();
@@ -168,48 +134,78 @@ public class TurnManager : MonoBehaviour
 
     private void UpdateCharacter()
     {
-        player = players[turn - 1];
+        currentPlayer = players[turn - 1];
 
-        gameView.SetCurrentPlayer(player.gameObject);
-        menuController.SetCurrentPlayer(player);
+        gameView.SetCurrentPlayer(currentPlayer.gameObject);
+        menuController.SetCurrentPlayer(currentPlayer);
     }
 
     private IEnumerator WaitForMovement()
     {
-        waitingForMovement = true;
+        IsWaitingForMovement = true;
 
-        while (gameController.speed < players[turn - 1].GetMaxSpeed() && waitingForMovement == true)
+        while (movementController.Speed < players[turn - 1].GetMaxSpeed() && IsWaitingForMovement == true)
         {
             yield return new WaitForEndOfFrame();
         }
 
-        waitingForMovement = false;
+        IsWaitingForMovement = false;
     }
 
     private IEnumerator WaitForAction()
     {
-        while (!menuController.chooseAction)
+        while (!menuController.HasChosenAction)
         {
             yield return new WaitForEndOfFrame();
         }
-
-        gameController.speed = 0;
-        menuController.chooseAction = false;
     }
 
-    public void CheckIfGameOver()
+    private void CheckIfGameOver()
     {
         if (playerCounter == 1)
         {
-            Debug.Log("YOU WIN!!!");
+            Debug.Log("PLAYER " + turn + " WINS!!!");
             gameOver = true;
+
+            menuController.gameObject.SetActive(false);
         }
 
-        else if (playersAmount < 3 && enemiesAmount >= 0)
+        else if (playerCounter < 3 && enemiesCounter > 0)
         {
             Debug.Log("EVERYBODY LOSES!!!");
             gameOver = true;
-        }
 
+            menuController.gameObject.SetActive(false);
+        }
+    }
+
+    private void KillCounter()
+    {
+        for (int i = 0; i < players.Count; i++)
+        {
+            if (players[i].Health == 0)
+            {
+                if (enableLogs)
+                    Debug.Log("Player " + (i + 1) + " has died.");
+
+                playerDeadFlags[i] = true;
+
+                if (players[i].IsEnemy)
+                {
+                    enemiesCounter--;
+                    if (enableLogs)
+                        Debug.Log("ENEMIES: " + enemiesCounter);
+                }
+
+                else
+                {
+                    playerCounter--;
+                    if (enableLogs)
+                        Debug.Log("PLAYERS: " + playerCounter);
+                }
+
+                movementController.RemovePositionAfterDeath(i, turn);
+            }
+        }
     }
 }

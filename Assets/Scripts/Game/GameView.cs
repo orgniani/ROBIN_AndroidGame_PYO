@@ -1,13 +1,14 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class GameView : MonoBehaviour
 {
+    [Header("Grid Parameters")]
     [SerializeField] private float gridCellSize = 1f;
     [SerializeField] private float spaceBetweenCells = 0.1f;
 
-    [SerializeField] private List<GameObject> terrainPrefabs;
+    [Header("Grid Reference")]
+    [SerializeField] private GameObject grassPrefabs;
 
     private GameObject player;
     private List<GameObject> playerObjects = new List<GameObject>();
@@ -20,6 +21,8 @@ public class GameView : MonoBehaviour
         {
             playerObjects.Clear();
             playerObjects.AddRange(players);
+
+            playerObjects[i].SetActive(true);
         }
     }
 
@@ -48,12 +51,10 @@ public class GameView : MonoBehaviour
             var gridRow = new List<GameObject>();
             for (var column = 0; column < map[row].Count; column++)
             {
-                var terrainType = map[row][column];
-
                 var xPos = column * (gridCellSize + spaceBetweenCells);
                 var yPos = row * (gridCellSize + spaceBetweenCells);
 
-                var gridCell = Instantiate(terrainPrefabs[(int)terrainType], transform);
+                var gridCell = Instantiate(grassPrefabs, transform);
 
                 gridCell.transform.localPosition = new Vector3(xPos, yPos, 1);
                 gridRow.Add(gridCell);
@@ -69,8 +70,6 @@ public class GameView : MonoBehaviour
             player = playerObjects[i];
             MovePlayerToCell(playerPositions[i].x, playerPositions[i].y);
         }
-
         player = playerObjects[0];
     }
-
 }

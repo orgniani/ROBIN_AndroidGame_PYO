@@ -3,9 +3,8 @@ using UnityEngine;
 
 public class UIMenuText : MonoBehaviour
 {
-    [Header("Text")]
     [SerializeField] private TMP_Text HPText;
-    [SerializeField] private HealthController HP;
+    [SerializeField] private Player HP;
 
     private void OnEnable()
     {

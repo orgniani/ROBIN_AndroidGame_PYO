@@ -8,9 +8,11 @@ public class MapBuilder
     public virtual Vector2Int GetStartPosition()
     {
         Vector2Int position;
+
         do
         {
             position = GetRandomPosition();
+
         } while (assignedPositions.Contains(position));
 
         assignedPositions.Add(position);
@@ -21,6 +23,7 @@ public class MapBuilder
     {
         int randomRow = Random.Range(0, Configurations.GridHeight);
         int randomColumn = Random.Range(0, Configurations.GridWidth);
+
         return new Vector2Int(randomRow, randomColumn);
     }
 
@@ -35,9 +38,9 @@ public class MapBuilder
             {
                 row.Add(TerrainType.GRASS);
             }
+
             map.Add(row);
         }
-        map[Configurations.StartPosition.x][Configurations.StartPosition.y] = TerrainType.GRASS; //CHANGE THIS
             
         return map;
     }

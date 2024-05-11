@@ -1,51 +1,40 @@
+using System;
 using UnityEngine;
 
 public class Player : MonoBehaviour
 {
+    [Header("Parameters")]
     [SerializeField] private int maxSpeed;
+    [SerializeField] private int health = 1;
 
+    [Space(10)]
     [SerializeField] private int rangeDamage;
     [SerializeField] private int meleeDamage;
     [SerializeField] private int cureHP;
 
+    [Header("Max Distances")]
     [SerializeField] private float maxRangeAttackDistance = 1.55f;
     [SerializeField] private float maxRangeHealDistance = 1.3f;
 
+    [Header("Behaviors")]
     [SerializeField] private bool canOnlyHealSelf = false;
     [SerializeField] private bool canRangeAttack = false;
     [SerializeField] private bool isEnemy = false;
 
+    [Header("References")]
     [SerializeField] private GameObject icon;
     [SerializeField] private Transform statBox;
-    [SerializeField] private HealthController HP;
 
+    public event Action onHPChange = delegate { };
+    public event Action onDead = delegate { };
 
     public bool IsEnemy => isEnemy;
 
-
-    private void OnEnable()
-    {
-        HP.onDead += HandleDeath;
-    }
-
-    private void OnDisable()
-    {
-        HP.onDead -= HandleDeath;
-    }
+    public int Health => health;
 
     public int GetMaxSpeed()
     {
         return maxSpeed;
-    }
-
-    public void MeleeAttack(HealthController targetHP)
-    {
-        targetHP.ReceiveDamage(meleeDamage);
-    }
-
-    public void RangeAttack(HealthController targetHP)
-    {
-        targetHP.ReceiveDamage(rangeDamage);
     }
 
     public float GetMaxAttackRange()
@@ -58,22 +47,12 @@ public class Player : MonoBehaviour
         return maxRangeHealDistance;
     }
 
-    public void Heal(HealthController targetHP)
-    {
-        targetHP.CureHP(cureHP);
-    }
-
-    public HealthController GetHP()
-    {
-        return HP;
-    }
-
     public bool GetCanOnlyHealSelf()
     {
         return canOnlyHealSelf;
     }
 
-    public bool CanRangeAttack()
+    public bool GetCanRangeAttack()
     {
         return canRangeAttack;
     }
@@ -89,8 +68,51 @@ public class Player : MonoBehaviour
         icon.SetActive(active);
     }
 
-    private void HandleDeath()
+    public void MeleeAttack(Player targetHP)
     {
+        targetHP.ReceiveDamage(meleeDamage);
+    }
+
+    public void RangeAttack(Player targetHP)
+    {
+        targetHP.ReceiveDamage(rangeDamage);
+    }
+
+    public void Heal(Player targetHP)
+    {
+        targetHP.CureHP(cureHP);
+    }
+
+    private void ReceiveDamage(int damage)
+    {
+        health -= damage;
+
+        if (health <= 0)
+        {
+            health = 0;
+            onHPChange?.Invoke();
+
+            Die();
+
+            return;
+        }
+
+        onHPChange?.Invoke();
+    }
+
+    private void CureHP(int addedHP)
+    {
+        health += addedHP;
+        onHPChange?.Invoke();
+    }
+
+    private void Die()
+    {
+        onDead?.Invoke();
+        health = -1;
+
         Destroy(icon);
+
+        gameObject.SetActive(false);
     }
 }
