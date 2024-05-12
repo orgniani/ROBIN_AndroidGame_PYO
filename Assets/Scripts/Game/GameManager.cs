@@ -19,6 +19,7 @@ public class GameManager : MonoBehaviour
 
     private bool[] playerDeadFlags;
 
+    private int playersTotal = 0;
     private int playerCounter = 0;
     private int enemiesCounter = 0;
 
@@ -85,7 +86,11 @@ public class GameManager : MonoBehaviour
             playerDeadFlags[i] = false;
 
             if (players[i].IsEnemy) enemiesCounter++;
-            else playerCounter++;
+            else
+            {
+                playerCounter++;
+                playersTotal++;
+            }
         }
 
         IsWaitingForMovement = true;
@@ -195,7 +200,7 @@ public class GameManager : MonoBehaviour
             actionController.gameObject.SetActive(false);
         }
 
-        else if (playerCounter < 3 && enemiesCounter > 0)
+        else if (playerCounter < playersTotal && enemiesCounter > 0)
         {
             if (enableLogs)
                 Debug.Log("EVERYBODY LOSES!!!");
