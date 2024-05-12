@@ -187,7 +187,9 @@ public class GameManager : MonoBehaviour
     {
         if (playerCounter == 1)
         {
-            Debug.Log("PLAYER " + turn + " WINS!!!");
+            if (enableLogs)
+                Debug.Log("PLAYER " + turn + " WINS!!!");
+
             gameOver = true;
 
             actionController.gameObject.SetActive(false);
@@ -195,7 +197,9 @@ public class GameManager : MonoBehaviour
 
         else if (playerCounter < 3 && enemiesCounter > 0)
         {
-            Debug.Log("EVERYBODY LOSES!!!");
+            if (enableLogs)
+                Debug.Log("EVERYBODY LOSES!!!");
+
             gameOver = true;
 
             actionController.gameObject.SetActive(false);
@@ -216,15 +220,11 @@ public class GameManager : MonoBehaviour
                 if (players[i].IsEnemy)
                 {
                     enemiesCounter--;
-                    if (enableLogs)
-                        Debug.Log("ENEMIES: " + enemiesCounter);
                 }
 
                 else
                 {
                     playerCounter--;
-                    if (enableLogs)
-                        Debug.Log("PLAYERS: " + playerCounter);
                 }
 
                 movementController.RemovePositionAfterDeath(i, turn);

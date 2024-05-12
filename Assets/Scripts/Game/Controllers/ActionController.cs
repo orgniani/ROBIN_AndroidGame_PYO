@@ -2,36 +2,30 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.UI;
 using Random = UnityEngine.Random;
 
 public class ActionController : MonoBehaviour
 {
     [Header("References")]
-    [SerializeField] private GameManager turnManager;
+    [SerializeField] private GameManager gameManager;
     [SerializeField] private GameObject rangeButton;
 
     [Space(10)]
     [SerializeField] private Transform border;
     [SerializeField] private Transform enemyBorder;
 
-    [Header("Buttons For Enemies Random Choice")]
-    [SerializeField] private List<Button> enemyTargetButtons;
-    [SerializeField] private List<Button> enemyActionButtons;
-
     [Header("Parameters")]
-    [SerializeField] private float meleeDistance = 1;
+    [SerializeField] private float meleeDistance = 1f;
+    [SerializeField] private float enemyTimeoutDuration = 3f;
 
     [Header("Logs")]
     [SerializeField] private bool enableLogs = true;
 
-    private Player currentPlayer;
     private List<Player> allPlayers = new List<Player>();
-
-    private Button actionButton;
-    private Coroutine currentActionCoroutine;
-
+    private Player currentPlayer;
     private Player target;
+
+    private Coroutine currentActionCoroutine;
 
     private IconSetter iconSetter;
 
@@ -41,9 +35,9 @@ public class ActionController : MonoBehaviour
 
     private void Awake()
     {
-        if (!turnManager)
+        if (!gameManager)
         {
-            Debug.LogError($"{name}: {nameof(turnManager)} is null!" +
+            Debug.LogError($"{name}: {nameof(gameManager)} is null!" +
                            $"\nDisabling object to avoid errors.");
             enabled = false;
             return;
@@ -68,22 +62,6 @@ public class ActionController : MonoBehaviour
         if (!enemyBorder)
         {
             Debug.LogError($"{name}: {nameof(enemyBorder)} is null!" +
-                           $"\nDisabling object to avoid errors.");
-            enabled = false;
-            return;
-        }
-
-        if (enemyActionButtons.Count <= 0)
-        {
-            Debug.LogError($"{name}: There are no action buttons in the action buttons list!" +
-                           $"\nDisabling object to avoid errors.");
-            enabled = false;
-            return;
-        }
-
-        if (enemyTargetButtons.Count <= 0)
-        {
-            Debug.LogError($"{name}: There are no target buttons in the target buttons list!" +
                            $"\nDisabling object to avoid errors.");
             enabled = false;
             return;
@@ -127,7 +105,7 @@ public class ActionController : MonoBehaviour
         if (currentActionCoroutine != null)
             StopCoroutine(currentActionCoroutine);
 
-        currentActionCoroutine = StartCoroutine(ActionSequence(currentPlayer.RangeAttack));
+        currentActionCoroutine = StartCoroutine(PlayerAction(currentPlayer.RangeAttack));
     }
 
     public void OnMeleeAttack()
@@ -137,7 +115,7 @@ public class ActionController : MonoBehaviour
         if (currentActionCoroutine != null)
             StopCoroutine(currentActionCoroutine);
 
-        currentActionCoroutine = StartCoroutine(ActionSequence(currentPlayer.MeleeAttack));
+        currentActionCoroutine = StartCoroutine(PlayerAction(currentPlayer.MeleeAttack));
     }
 
     public void OnHeal()
@@ -147,7 +125,7 @@ public class ActionController : MonoBehaviour
         if (currentActionCoroutine != null)
             StopCoroutine(currentActionCoroutine);
 
-        currentActionCoroutine = StartCoroutine(ActionSequence(currentPlayer.Heal));
+        currentActionCoroutine = StartCoroutine(PlayerAction(currentPlayer.Heal));
     }
 
     public void OnChooseTarget(Player target)
@@ -155,10 +133,10 @@ public class ActionController : MonoBehaviour
         this.target = target;
     }
 
-    private IEnumerator ActionSequence(Action<Player> action)
+    private IEnumerator PlayerAction(Action<Player> action)
     {
         target = null;
-        turnManager.IsWaitingForMovement = false;
+        gameManager.IsWaitingForMovement = false;
 
         while (target == null)
         {
@@ -172,18 +150,17 @@ public class ActionController : MonoBehaviour
 
     private IEnumerator EnemyAction()
     {
-        float timeoutDuration = 3f;
         float startTime = Time.time;
 
         yield return new WaitForSeconds(1);
 
-        turnManager.IsWaitingForMovement = false;
+        gameManager.IsWaitingForMovement = false;
 
         yield return new WaitForSeconds(1);
 
-        ChooseRandomAction();
+        OnMeleeAttack();
 
-        yield return WaitUntilTargetSelectedOrTimeout(timeoutDuration, startTime);
+        yield return WaitUntilTargetSelectedOrTimeout(enemyTimeoutDuration, startTime);
         yield return new WaitForSeconds(1);
     }
 
@@ -205,35 +182,71 @@ public class ActionController : MonoBehaviour
         }
     }
 
-    private void ChooseRandomAction()
-    {
-        actionButton = null;
-
-        int randomIndex = Random.Range(0, enemyActionButtons.Count);
-        actionButton = enemyActionButtons[randomIndex];
-
-        actionButton.onClick.Invoke();
-    }
-
     private void ChooseRandomTarget()
     {
-        int randomIndex = Random.Range(0, enemyTargetButtons.Count);
-        Button randomButton = enemyTargetButtons[randomIndex];
+        Player closestTarget = FindClosestTarget(meleeDistance);
 
-        if (randomButton.gameObject.activeSelf)
+        if (closestTarget == null)
+        {
+            OnRangeAttack();
+            closestTarget = FindClosestTarget(currentPlayer.GetMaxAttackRange());
+        }
+
+        if (closestTarget != null)
         {
             round++;
 
             if (enableLogs)
-            {
-                Debug.Log(round + " - " + currentPlayer.name + " has Chosen Action Button: " + actionButton.name);
-                Debug.Log(round + " - " + currentPlayer.name + " has Chosen Target Button: " + randomButton.name);
-            }
-
-            randomButton.onClick.Invoke();
-            return;
+                Debug.Log(round + " - " + currentPlayer.name + " has Chosen Target: " + closestTarget.name);
         }
 
-        ChooseRandomAction();
+        target = closestTarget;
+    }
+
+    private Player FindClosestTarget(float maxRange)
+    {
+        Player closestTarget = null;
+        float minDistance = float.MaxValue;
+        List<Player> closestTargets = new List<Player>();
+
+        foreach (Player targetPlayer in allPlayers)
+        {
+            if (!IsValidTarget(targetPlayer))
+                continue;
+
+            float distance = Vector2.Distance(currentPlayer.transform.position, targetPlayer.transform.position);
+
+            if (distance <= maxRange)
+            {
+                UpdateClosestTargets(distance, targetPlayer, ref minDistance, ref closestTargets);
+            }
+        }
+
+        if (closestTargets.Count > 0)
+        {
+            closestTarget = closestTargets[Random.Range(0, closestTargets.Count)];
+        }
+
+        return closestTarget;
+    }
+
+    private bool IsValidTarget(Player player)
+    {
+        return !player.IsEnemy;
+    }
+
+    private void UpdateClosestTargets(float distance, Player targetPlayer, ref float minDistance, ref List<Player> closestTargets)
+    {
+        if (distance < minDistance)
+        {
+            minDistance = distance;
+            closestTargets.Clear();
+            closestTargets.Add(targetPlayer);
+        }
+
+        else if (distance == minDistance)
+        {
+            closestTargets.Add(targetPlayer);
+        }
     }
 }
