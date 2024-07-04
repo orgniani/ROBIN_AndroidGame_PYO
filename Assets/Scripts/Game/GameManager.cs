@@ -34,6 +34,8 @@ public class GameManager : MonoBehaviour
 
     private void Awake()
     {
+        Application.targetFrameRate = 60;
+
         if (!actionController)
         {
             Debug.LogError($"{name}: {nameof(actionController)} is null!" +
