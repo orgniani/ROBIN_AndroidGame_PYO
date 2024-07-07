@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -9,25 +10,32 @@ public class MovementController
 
     private List<List<TerrainType>> map;
 
+    private List<Player> players;
+    private Player currentPlayer;
+
     private GameView gameView;
 
     public int Speed { private set; get; }
 
-    public MovementController(GameView view, MapBuilder mapBuilder, int playerAmount)
+    public MovementController(GameView view, MapBuilder mapBuilder, int playerAmount, List<Player> players)
     {
         gameView = view;
 
         map = mapBuilder.GenerateMap();
         gameView.InitializeMap(map);
 
+        this.players = players;
+
         for (int i = 0; i < playerAmount; i++)
         {
             Vector2Int newPosition = mapBuilder.GetStartPosition();
             positions.Add(newPosition);
+            players[i].GridPosition = newPosition;
             map[newPosition.y][newPosition.x] = TerrainType.CHARACTER;
         }
 
         currentPlayerPosition = positions[0];
+        currentPlayer = players[0];
         gameView.InitializeCharacterPositions(positions);
     }
 
@@ -92,6 +100,7 @@ public class MovementController
     public void UpdateCharacterPosition(int turn)
     {
         currentPlayerPosition = positions[turn-1];
+        currentPlayer = players[turn - 1];
         Speed = 0;
     }
 
@@ -116,6 +125,7 @@ public class MovementController
         map[newY][newX] = TerrainType.CHARACTER;
 
         currentPlayerPosition = new Vector2Int(newX, newY);
+        currentPlayer.SetGridPosition(currentPlayerPosition);
 
         gameView.MovePlayerToCell(currentPlayerPosition.x, currentPlayerPosition.y);
         Speed++;

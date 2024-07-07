@@ -32,6 +32,9 @@ public class Player : MonoBehaviour
 
     public int Health => health;
 
+    public Vector2Int GridPosition { get; set; }
+    //TODO: Use this to change it in the gamemanager!!! check a check a check it out
+
     private void Awake()
     {
         if (!icon)
@@ -49,6 +52,11 @@ public class Player : MonoBehaviour
             enabled = false;
             return;
         }
+    }
+
+    public void SetGridPosition(Vector2Int newPosition)
+    {
+        GridPosition = newPosition;
     }
 
     public int GetMaxSpeed()

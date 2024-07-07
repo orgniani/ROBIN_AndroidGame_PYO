@@ -26,11 +26,13 @@ public class GameManager : MonoBehaviour
     private int turn = 1;
     private int maxTurns = 0;
 
-    private bool gameOver = false;
-
     private MovementController movementController;
 
+    public MovementController MovementController => movementController;
+
     public bool IsWaitingForMovement { set; get; } 
+
+    public bool GameOver { get; private set; }
 
     private void Awake()
     {
@@ -97,13 +99,13 @@ public class GameManager : MonoBehaviour
 
         IsWaitingForMovement = true;
 
-        movementController = new MovementController(gameView, new MapBuilder(), players.Count);
+        movementController = new MovementController(gameView, new MapBuilder(), players.Count, players);
         StartCoroutine(PlayerTurn());
     }
 
     private void Update()
     {
-        if (!IsWaitingForMovement || gameOver) return;
+        if (!IsWaitingForMovement || GameOver) return;
 
         if (currentPlayer.IsEnemy)
         {
@@ -135,7 +137,7 @@ public class GameManager : MonoBehaviour
 
     private IEnumerator PlayerTurn()
     {
-        if (gameOver) yield break;
+        if (GameOver) yield break;
 
         bool currentPlayerIsDead = IsPlayerDead(turn);
 
@@ -197,7 +199,7 @@ public class GameManager : MonoBehaviour
             if (enableLogs)
                 Debug.Log("PLAYER " + turn + " WINS!!!");
 
-            gameOver = true;
+            GameOver = true;
 
             actionController.gameObject.SetActive(false);
         }
@@ -207,7 +209,7 @@ public class GameManager : MonoBehaviour
             if (enableLogs)
                 Debug.Log("EVERYBODY LOSES!!!");
 
-            gameOver = true;
+            GameOver = true;
 
             actionController.gameObject.SetActive(false);
         }

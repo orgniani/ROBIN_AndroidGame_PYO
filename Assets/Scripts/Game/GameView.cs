@@ -40,6 +40,8 @@ public class GameView : MonoBehaviour
     public void MovePlayerToCell(int row, int column)
     {
         MovePlayerToCell(grid[column][row]);
+        var playerComponent = player.GetComponent<Player>();
+        playerComponent.SetGridPosition(new Vector2Int(row, column));
     }
 
     public void InitializeMap(List<List<TerrainType>> map)
@@ -69,6 +71,11 @@ public class GameView : MonoBehaviour
         for (int i = 0; i < playerObjects.Count; i++)
         {
             player = playerObjects[i];
+
+            var playerComponent = player.GetComponent<Player>();
+            playerComponent.SetGridPosition(playerPositions[i]);
+            //TODO: ADDED THIS
+
             MovePlayerToCell(playerPositions[i].x, playerPositions[i].y);
         }
         player = playerObjects[0];

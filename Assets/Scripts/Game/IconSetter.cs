@@ -38,7 +38,7 @@ public class IconSetter
     {
         foreach (Player targetPlayer in allPlayers)
         {
-            bool inHealRange = IsClose(currentPlayer.transform.position, targetPlayer.transform.position, currentPlayer.GetMaxHealRange()) && !currentPlayer.GetCanOnlyHealSelf();
+            bool inHealRange = IsClose(currentPlayer.GridPosition, targetPlayer.GridPosition, currentPlayer.GetMaxHealRange()) && !currentPlayer.GetCanOnlyHealSelf();
             targetPlayer.SetIconActive(inHealRange);
 
             if (targetPlayer.IsEnemy)
@@ -54,22 +54,30 @@ public class IconSetter
     {
         foreach (Player targetPlayer in allPlayers)
         {
-            bool inRange = IsInRange(currentPlayer.transform.position, targetPlayer.transform.position, maxRange);
-            bool inMeleeRange = IsClose(currentPlayer.transform.position, targetPlayer.transform.position, maxDistance);
+            bool inRange = IsInRange(currentPlayer.GridPosition, targetPlayer.GridPosition, maxRange);
+            bool inMeleeRange = IsClose(currentPlayer.GridPosition, targetPlayer.GridPosition, maxDistance);
 
             targetPlayer.SetIconActive(maxRange > 0f ? inRange : inMeleeRange);
         }
     }
 
-    private bool IsClose(Vector2 position1, Vector2 position2, float maxDistance)
+    private bool IsClose(Vector2Int position1, Vector2Int position2, float maxDistance)
     {
-        float distance = Vector2.Distance(position1, position2);
-        return distance <= maxDistance;
+        int dx = Mathf.Abs(position1.x - position2.x);
+        int dy = Mathf.Abs(position1.y - position2.y);
+
+        int chebyshevDistance = Mathf.Max(dx, dy);
+        return chebyshevDistance <= maxDistance;
     }
 
-    private bool IsInRange(Vector2 position1, Vector2 position2, float maxRange)
+    //TODO: CHANGED THESE TWO
+
+    private bool IsInRange(Vector2Int position1, Vector2Int position2, float maxRange)
     {
-        float distance = Vector2.Distance(position1, position2);
-        return distance > meleeDistance && distance <= maxRange;
+        int dx = Mathf.Abs(position1.x - position2.x);
+        int dy = Mathf.Abs(position1.y - position2.y);
+
+        int chebyshevDistance = Mathf.Max(dx, dy);
+        return chebyshevDistance > meleeDistance && chebyshevDistance <= maxRange;
     }
 }
