@@ -34,6 +34,9 @@ public class GameManager : MonoBehaviour
 
     public bool GameOver { get; private set; }
 
+    public event Action OnGameWon;
+    public event Action OnGameLost;
+
     private void Awake()
     {
         Application.targetFrameRate = 60;
@@ -200,6 +203,7 @@ public class GameManager : MonoBehaviour
                 Debug.Log("PLAYER " + turn + " WINS!!!");
 
             GameOver = true;
+            OnGameWon?.Invoke();
 
             actionController.gameObject.SetActive(false);
         }
@@ -210,6 +214,7 @@ public class GameManager : MonoBehaviour
                 Debug.Log("EVERYBODY LOSES!!!");
 
             GameOver = true;
+            OnGameLost?.Invoke();
 
             actionController.gameObject.SetActive(false);
         }
@@ -239,5 +244,10 @@ public class GameManager : MonoBehaviour
                 movementController.RemovePositionAfterDeath(i, turn);
             }
         }
+    }
+
+    public int GetPlayerNumber()
+    {
+        return turn;
     }
 }

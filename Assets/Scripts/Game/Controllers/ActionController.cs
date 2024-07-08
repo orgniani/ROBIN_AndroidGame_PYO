@@ -203,7 +203,6 @@ public class ActionController : MonoBehaviour
         target = closestTarget;
     }
 
-    //TODO: ACA!!!!!!!!!! change enemy logic
     private Player FindClosestTarget(float maxRange)
     {
         Player closestTarget = null;
@@ -215,7 +214,7 @@ public class ActionController : MonoBehaviour
             if (!IsValidTarget(targetPlayer))
                 continue;
 
-            float distance = Vector2.Distance(currentPlayer.transform.position, targetPlayer.transform.position);
+            int distance = CalculateDistance(currentPlayer.GridPosition, targetPlayer.GridPosition);
 
             if (distance <= maxRange)
             {
@@ -229,6 +228,14 @@ public class ActionController : MonoBehaviour
         }
 
         return closestTarget;
+    }
+
+    private int CalculateDistance(Vector2Int position1, Vector2Int position2)
+    {
+        int dx = Mathf.Abs(position1.x - position2.x);
+        int dy = Mathf.Abs(position1.y - position2.y);
+
+        return Mathf.Max(dx, dy);
     }
 
     private bool IsValidTarget(Player player)

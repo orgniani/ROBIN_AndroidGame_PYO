@@ -63,21 +63,24 @@ public class IconSetter
 
     private bool IsClose(Vector2Int position1, Vector2Int position2, float maxDistance)
     {
-        int dx = Mathf.Abs(position1.x - position2.x);
-        int dy = Mathf.Abs(position1.y - position2.y);
-
-        int chebyshevDistance = Mathf.Max(dx, dy);
-        return chebyshevDistance <= maxDistance;
+        int distance = CalculateDistance(position1, position2);
+        return distance <= maxDistance;
     }
 
     //TODO: CHANGED THESE TWO
 
     private bool IsInRange(Vector2Int position1, Vector2Int position2, float maxRange)
     {
+        int distance = CalculateDistance(position1, position2);
+
+        return distance > meleeDistance && distance <= maxRange;
+    }
+
+    private int CalculateDistance(Vector2Int position1, Vector2Int position2)
+    {
         int dx = Mathf.Abs(position1.x - position2.x);
         int dy = Mathf.Abs(position1.y - position2.y);
 
-        int chebyshevDistance = Mathf.Max(dx, dy);
-        return chebyshevDistance > meleeDistance && chebyshevDistance <= maxRange;
+        return Mathf.Max(dx, dy);
     }
 }

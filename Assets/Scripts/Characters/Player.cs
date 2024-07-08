@@ -33,7 +33,6 @@ public class Player : MonoBehaviour
     public int Health => health;
 
     public Vector2Int GridPosition { get; set; }
-    //TODO: Use this to change it in the gamemanager!!! check a check a check it out
 
     private void Awake()
     {
