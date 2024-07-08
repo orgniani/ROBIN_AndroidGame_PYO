@@ -34,8 +34,7 @@ public class GameManager : MonoBehaviour
 
     public bool GameOver { get; private set; }
 
-    public event Action OnGameWon;
-    public event Action OnGameLost;
+    public event Action<GameOverReason> OnGameOver;
 
     private void Awake()
     {
@@ -203,7 +202,7 @@ public class GameManager : MonoBehaviour
                 Debug.Log("PLAYER " + turn + " WINS!!!");
 
             GameOver = true;
-            OnGameWon?.Invoke();
+            OnGameOver?.Invoke(GameOverReason.WIN);
 
             actionController.gameObject.SetActive(false);
         }
@@ -214,7 +213,7 @@ public class GameManager : MonoBehaviour
                 Debug.Log("EVERYBODY LOSES!!!");
 
             GameOver = true;
-            OnGameLost?.Invoke();
+            OnGameOver?.Invoke(GameOverReason.LOSE);
 
             actionController.gameObject.SetActive(false);
         }
@@ -246,6 +245,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    //TODO: MAYBE I CAN DO THIS BETTER
     public int GetPlayerNumber()
     {
         return turn;

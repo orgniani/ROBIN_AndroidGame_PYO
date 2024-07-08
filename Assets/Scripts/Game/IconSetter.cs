@@ -67,12 +67,9 @@ public class IconSetter
         return distance <= maxDistance;
     }
 
-    //TODO: CHANGED THESE TWO
-
     private bool IsInRange(Vector2Int position1, Vector2Int position2, float maxRange)
     {
         int distance = CalculateDistance(position1, position2);
-
         return distance > meleeDistance && distance <= maxRange;
     }
 

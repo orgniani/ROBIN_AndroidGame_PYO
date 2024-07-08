@@ -20,8 +20,12 @@ public class UIManager : MonoBehaviour
 
     [Header("Text")]
     [SerializeField] private TMP_Text gameOverText;
+    [SerializeField] private TMP_Text timeText;
 
     private GameManager gameManager;
+
+    private float startTime;
+    private bool isCounting = false;
 
     private void Awake()
     {
@@ -30,14 +34,12 @@ public class UIManager : MonoBehaviour
 
     private void OnEnable()
     {
-        gameManager.OnGameWon += HandleGameWonCanvas;
-        gameManager.OnGameLost += HandleGameLostCanvas;
+        gameManager.OnGameOver += HandleGameOverCanvas;
     }
 
     private void OnDisable()
     {
-        gameManager.OnGameWon -= HandleGameWonCanvas;
-        gameManager.OnGameLost -= HandleGameLostCanvas;
+        gameManager.OnGameOver -= HandleGameOverCanvas;
     }
 
     private void Start()
@@ -50,24 +52,42 @@ public class UIManager : MonoBehaviour
         warningCanvas.SetActive(false);
 
         loadingCanvas.SetActive(false);
+
+        startTime = Time.time;
+        isCounting = true;
     }
 
     private void Update()
     {
+        if (isCounting)
+        {
+            float elapsedTime = Time.time - startTime;
+
+            int minutes = (int)((elapsedTime % 3600) / 60);
+            int seconds = (int)(elapsedTime % 60);
+
+            timeText.text = $"{minutes:D2}:{seconds:D2}";
+        }
+
         if (!loadBar) return;
         loadBar.value = (LoaderManager.Get().loadingProgress);
     }
 
-    private void HandleGameWonCanvas()
+    private void HandleGameOverCanvas(GameOverReason reason)
     {
-        OnOpenAndCloseCanvas(gameOverCanvas);
-        gameOverText.text = $"Player " + gameManager.GetPlayerNumber() + " has won!";
-    }
+        switch(reason)
+        {
+            case GameOverReason.WIN:
+                gameOverText.text = $"Player " + gameManager.GetPlayerNumber() + " has won!";
+                break;
 
-    private void HandleGameLostCanvas()
-    {
+            case GameOverReason.LOSE:
+                gameOverText.text = $"One of your players died before the enemies!";
+                break;
+        }
+
         OnOpenAndCloseCanvas(gameOverCanvas);
-        gameOverText.text = $"One of your players died before the enemies!";
+        isCounting = false;
     }
 
     //Movement Buttons

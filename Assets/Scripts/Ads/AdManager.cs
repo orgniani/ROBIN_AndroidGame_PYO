@@ -4,7 +4,6 @@ using UnityEngine.Advertisements;
 
 public abstract class AdManager : MonoBehaviour, IUnityAdsInitializationListener
 {
-    [SerializeField] protected GameManager gameManager;
     [SerializeField] protected bool enableLogs = false;
 
     private string gameId;
@@ -16,14 +15,6 @@ public abstract class AdManager : MonoBehaviour, IUnityAdsInitializationListener
 
     private void Awake()
     {
-        if (!gameManager)
-        {
-            Debug.LogError($"{name}: {nameof(gameManager)} is null!" +
-                           $"\nDisabling object to avoid errors.");
-            enabled = false;
-            return;
-        }
-
 #if UNITY_IOS
         gameId = "5629789";
 #elif UNITY_ANDROID

@@ -1,23 +1,25 @@
 using UnityEngine;
 using UnityEngine.Advertisements;
 
-
 public class InterstitialAdManager : AdManager, IUnityAdsLoadListener, IUnityAdsShowListener
 {
     [Header("Unit IDs")]
     [SerializeField] private string interstitialAndroidAdUnitId = "Interstitial_Android";
     [SerializeField] private string interstitialIOSAdUnitId = "Interstitial_iOS";
 
+    [Header("Managers")]
+    [SerializeField] private GameManager gameManager;
+
     private void OnEnable()
     {
         OnUnityAdsInitialized += InitializeInterstitial;
-        //SUBSCRIBE TO EVENT FROM GAME MANAGER THAT ACTIVATES INTERSTITIAL AD
+        gameManager.OnGameOver += ShowInterstitial;
     }
 
     private void OnDisable()
     {
         OnUnityAdsInitialized -= InitializeInterstitial;
-        //UNSUBSCRIBE TO EVENT FROM GAME MANAGER THAT ACTIVATES INTERSTITIAL AD
+        gameManager.OnGameOver -= ShowInterstitial;
     }
 
     protected override void SetIDs()
@@ -34,7 +36,7 @@ public class InterstitialAdManager : AdManager, IUnityAdsLoadListener, IUnityAds
         Advertisement.Load(adUnitId, this);
     }
 
-    public void ShowInterstitial()
+    public void ShowInterstitial(GameOverReason reason)
     {
         if (adLoaded)
             Advertisement.Show(adUnitId, this);
