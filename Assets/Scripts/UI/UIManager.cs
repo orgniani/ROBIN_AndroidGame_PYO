@@ -30,6 +30,86 @@ public class UIManager : MonoBehaviour
     private void Awake()
     {
         gameManager = GetComponent<GameManager>();
+
+        if (!levelManager)
+        {
+            Debug.LogError($"{name}: {nameof(levelManager)} is null!" +
+                           $"\nDisabling object to avoid errors.");
+            enabled = false;
+            return;
+        }
+
+        if (!loadBar)
+        {
+            Debug.LogError($"{name}: {nameof(loadBar)} is null!" +
+                           $"\nDisabling object to avoid errors.");
+            enabled = false;
+            return;
+        }
+
+        if (!mainMenuCanvas)
+        {
+            Debug.LogError($"{name}: {nameof(mainMenuCanvas)} is null!" +
+                           $"\nDisabling object to avoid errors.");
+            enabled = false;
+            return;
+        }
+
+        if (!creditsCanvas)
+        {
+            Debug.LogError($"{name}: {nameof(creditsCanvas)} is null!" +
+                           $"\nDisabling object to avoid errors.");
+            enabled = false;
+            return;
+        }
+
+        if (!howToPlayCanvas)
+        {
+            Debug.LogError($"{name}: {nameof(howToPlayCanvas)} is null!" +
+                           $"\nDisabling object to avoid errors.");
+            enabled = false;
+            return;
+        }
+
+        if (!gameOverCanvas)
+        {
+            Debug.LogError($"{name}: {nameof(gameOverCanvas)} is null!" +
+                           $"\nDisabling object to avoid errors.");
+            enabled = false;
+            return;
+        }
+
+        if (!warningCanvas)
+        {
+            Debug.LogError($"{name}: {nameof(warningCanvas)} is null!" +
+                           $"\nDisabling object to avoid errors.");
+            enabled = false;
+            return;
+        }
+
+        if (!loadingCanvas)
+        {
+            Debug.LogError($"{name}: {nameof(loadingCanvas)} is null!" +
+                           $"\nDisabling object to avoid errors.");
+            enabled = false;
+            return;
+        }
+
+        if (!gameOverText)
+        {
+            Debug.LogError($"{name}: {nameof(gameOverText)} is null!" +
+                           $"\nDisabling object to avoid errors.");
+            enabled = false;
+            return;
+        }
+
+        if (!timeText)
+        {
+            Debug.LogError($"{name}: {nameof(timeText)} is null!" +
+                           $"\nDisabling object to avoid errors.");
+            enabled = false;
+            return;
+        }
     }
 
     private void OnEnable()
@@ -59,18 +139,22 @@ public class UIManager : MonoBehaviour
 
     private void Update()
     {
-        if (isCounting)
-        {
-            float elapsedTime = Time.time - startTime;
-
-            int minutes = (int)((elapsedTime % 3600) / 60);
-            int seconds = (int)(elapsedTime % 60);
-
-            timeText.text = $"{minutes:D2}:{seconds:D2}";
-        }
+        CountGameTime();
 
         if (!loadBar) return;
         loadBar.value = (LoaderManager.Get().loadingProgress);
+    }
+
+    private void CountGameTime()
+    {
+        if (!isCounting) return;
+
+        float elapsedTime = Time.time - startTime;
+
+        int minutes = (int)((elapsedTime % 3600) / 60);
+        int seconds = (int)(elapsedTime % 60);
+
+        timeText.text = $"{minutes:D2}:{seconds:D2}";
     }
 
     private void HandleGameOverCanvas(GameOverReason reason)
@@ -78,7 +162,7 @@ public class UIManager : MonoBehaviour
         switch(reason)
         {
             case GameOverReason.WIN:
-                gameOverText.text = $"Player " + gameManager.GetPlayerNumber() + " has won!";
+                gameOverText.text = $"Player " + gameManager.currentPlayerNumber + " has won!";
                 break;
 
             case GameOverReason.LOSE:

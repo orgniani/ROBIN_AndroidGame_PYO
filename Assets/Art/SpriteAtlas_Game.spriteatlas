@@ -23,7 +23,7 @@ SpriteAtlas:
     platformSettings:
     - serializedVersion: 3
       m_BuildTarget: DefaultTexturePlatform
-      m_MaxTextureSize: 512
+      m_MaxTextureSize: 1024
       m_ResizeAlgorithm: 0
       m_TextureFormat: -1
       m_TextureCompression: 1
@@ -47,47 +47,59 @@ SpriteAtlas:
     packables:
     - {fileID: 2800000, guid: eadc02eea0bc15542bc349eafa2d1158, type: 3}
     - {fileID: 2800000, guid: 941526370d7e08c4cb21dabb151d5198, type: 3}
-    - {fileID: 2800000, guid: c46295a803f8646f38e25bbe4b3e71c5, type: 3}
     - {fileID: 2800000, guid: 0812cdfb38a2a42419e72319d6dd7d52, type: 3}
     - {fileID: 2800000, guid: 73c43e7ec71112a4e9d818bf5fe7d998, type: 3}
     - {fileID: 2800000, guid: 67cfb02c6abc24647be2c8d746b62e57, type: 3}
-    - {fileID: 2800000, guid: 970a488f816ae3049ab8f9fa861f3bdb, type: 3}
-    - {fileID: 2800000, guid: c41d2490a670a1242af2e07e8d1f9591, type: 3}
-    - {fileID: 2800000, guid: 5693c25b52308e64db2d6075897a15a4, type: 3}
+    - {fileID: 2800000, guid: c2130b0f4210d024c8e4e278eeeb6506, type: 3}
+    - {fileID: 2800000, guid: 8aa4e77389198ad48a9180deb63292b5, type: 3}
+    - {fileID: 2800000, guid: c8145c02d35c92e4ea6a791b089e5b8d, type: 3}
+    - {fileID: 2800000, guid: 3e5f4d2767839324e8a457a11c2124dd, type: 3}
+    - {fileID: 2800000, guid: f69257c134224324aaf9531cd33a0a01, type: 3}
+    - {fileID: 2800000, guid: 689ec79e4e73690438bfc9d5457cb85d, type: 3}
+    - {fileID: 2800000, guid: 53ab843049aa9304c80dcc0d68b42cbd, type: 3}
     bindAsDefault: 1
     isAtlasV2: 0
     cachedData: {fileID: 0}
     packedSpriteRenderDataKeys:
-    - c41d2490a670a1242af2e07e8d1f9591: 21300000
+    - 53ab843049aa9304c80dcc0d68b42cbd: 21300000
+    - f69257c134224324aaf9531cd33a0a01: 21300000
+    - c8145c02d35c92e4ea6a791b089e5b8d: 21300000
+    - 8aa4e77389198ad48a9180deb63292b5: 21300000
+    - 3e5f4d2767839324e8a457a11c2124dd: 21300000
     - 941526370d7e08c4cb21dabb151d5198: 21300000
-    - c46295a803f8646f38e25bbe4b3e71c5: 21300000
-    - 5693c25b52308e64db2d6075897a15a4: 21300000
     - 0812cdfb38a2a42419e72319d6dd7d52: 21300000
     - 67cfb02c6abc24647be2c8d746b62e57: 21300000
     - 73c43e7ec71112a4e9d818bf5fe7d998: 21300000
+    - 689ec79e4e73690438bfc9d5457cb85d: 21300000
     - eadc02eea0bc15542bc349eafa2d1158: 21300000
-    - 970a488f816ae3049ab8f9fa861f3bdb: 21300000
+    - c2130b0f4210d024c8e4e278eeeb6506: 21300000
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
-  - {fileID: 21300000, guid: c41d2490a670a1242af2e07e8d1f9591, type: 3}
+  - {fileID: 21300000, guid: 53ab843049aa9304c80dcc0d68b42cbd, type: 3}
+  - {fileID: 21300000, guid: f69257c134224324aaf9531cd33a0a01, type: 3}
+  - {fileID: 21300000, guid: c8145c02d35c92e4ea6a791b089e5b8d, type: 3}
+  - {fileID: 21300000, guid: 8aa4e77389198ad48a9180deb63292b5, type: 3}
+  - {fileID: 21300000, guid: 3e5f4d2767839324e8a457a11c2124dd, type: 3}
   - {fileID: 21300000, guid: 941526370d7e08c4cb21dabb151d5198, type: 3}
-  - {fileID: 21300000, guid: c46295a803f8646f38e25bbe4b3e71c5, type: 3}
-  - {fileID: 21300000, guid: 5693c25b52308e64db2d6075897a15a4, type: 3}
   - {fileID: 21300000, guid: 0812cdfb38a2a42419e72319d6dd7d52, type: 3}
   - {fileID: 21300000, guid: 67cfb02c6abc24647be2c8d746b62e57, type: 3}
   - {fileID: 21300000, guid: 73c43e7ec71112a4e9d818bf5fe7d998, type: 3}
+  - {fileID: 21300000, guid: 689ec79e4e73690438bfc9d5457cb85d, type: 3}
   - {fileID: 21300000, guid: eadc02eea0bc15542bc349eafa2d1158, type: 3}
-  - {fileID: 21300000, guid: 970a488f816ae3049ab8f9fa861f3bdb, type: 3}
+  - {fileID: 21300000, guid: c2130b0f4210d024c8e4e278eeeb6506, type: 3}
   m_PackedSpriteNamesToIndex:
-  - active
+  - banner
+  - homeIcon
+  - buttonSquare
+  - starIcon
+  - button
   - healer
-  - grass
-  - square
   - fighter
   - enemy1
   - enemy2
+  - arrowIcon
   - range
-  - button
+  - gridCell
   m_RenderDataMap: {}
   m_Tag: SpriteAtlas_Game
   m_IsVariant: 0

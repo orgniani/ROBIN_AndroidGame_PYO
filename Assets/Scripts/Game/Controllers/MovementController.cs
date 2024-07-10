@@ -1,5 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 using Random = UnityEngine.Random;
 
@@ -125,7 +124,7 @@ public class MovementController
         map[newY][newX] = TerrainType.CHARACTER;
 
         currentPlayerPosition = new Vector2Int(newX, newY);
-        currentPlayer.SetGridPosition(currentPlayerPosition);
+        currentPlayer.GridPosition = currentPlayerPosition;
 
         gameView.MovePlayerToCell(currentPlayerPosition.x, currentPlayerPosition.y);
         Speed++;

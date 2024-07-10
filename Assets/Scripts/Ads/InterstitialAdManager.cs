@@ -52,10 +52,12 @@ public class InterstitialAdManager : AdManager, IUnityAdsLoadListener, IUnityAds
     private void FindGameManager()
     {
         gameManager = FindObjectOfType<GameManager>();
+
         if (gameManager == null)
         {
             Debug.LogError("GameManager not found in the scene.");
         }
+
         else
         {
             gameManager.OnGameOver += ShowInterstitial;

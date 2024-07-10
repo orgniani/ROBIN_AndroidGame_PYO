@@ -31,6 +31,8 @@ public class ActionController : MonoBehaviour
 
     private int round = 0;
 
+    public event Action<ActionType> OnActionChosen;
+
     public bool HasChosenAction { private set; get; }
 
     private void Awake()
@@ -105,7 +107,7 @@ public class ActionController : MonoBehaviour
         if (currentActionCoroutine != null)
             StopCoroutine(currentActionCoroutine);
 
-        currentActionCoroutine = StartCoroutine(PlayerAction(currentPlayer.RangeAttack));
+        currentActionCoroutine = StartCoroutine(PlayerAction(currentPlayer.RangeAttack, ActionType.RANGE));
     }
 
     public void OnMeleeAttack()
@@ -115,7 +117,7 @@ public class ActionController : MonoBehaviour
         if (currentActionCoroutine != null)
             StopCoroutine(currentActionCoroutine);
 
-        currentActionCoroutine = StartCoroutine(PlayerAction(currentPlayer.MeleeAttack));
+        currentActionCoroutine = StartCoroutine(PlayerAction(currentPlayer.MeleeAttack, ActionType.MELEE));
     }
 
     public void OnHeal()
@@ -125,7 +127,7 @@ public class ActionController : MonoBehaviour
         if (currentActionCoroutine != null)
             StopCoroutine(currentActionCoroutine);
 
-        currentActionCoroutine = StartCoroutine(PlayerAction(currentPlayer.Heal));
+        currentActionCoroutine = StartCoroutine(PlayerAction(currentPlayer.Heal, ActionType.HEAL));
     }
 
     public void OnChooseTarget(Player target)
@@ -133,7 +135,7 @@ public class ActionController : MonoBehaviour
         this.target = target;
     }
 
-    private IEnumerator PlayerAction(Action<Player> action)
+    private IEnumerator PlayerAction(Action<Player> action, ActionType actionType)
     {
         target = null;
         gameManager.IsWaitingForMovement = false;
@@ -144,6 +146,7 @@ public class ActionController : MonoBehaviour
         }
 
         action(target);
+        OnActionChosen?.Invoke(actionType);
         HasChosenAction = true;
         currentActionCoroutine = null;
     }

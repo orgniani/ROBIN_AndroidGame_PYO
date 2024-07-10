@@ -29,12 +29,14 @@ public class GameManager : MonoBehaviour
     private MovementController movementController;
 
     public MovementController MovementController => movementController;
+    public int currentPlayerNumber => turn;
 
     public bool IsWaitingForMovement { set; get; } 
 
     public bool GameOver { get; private set; }
 
     public event Action<GameOverReason> OnGameOver;
+    public event Action OnPlayerDeath;
 
     private void Awake()
     {
@@ -115,6 +117,9 @@ public class GameManager : MonoBehaviour
             return;
         }
 
+
+#if UNITY_EDITOR
+
         Dictionary<KeyCode, Action> movementActions = new Dictionary<KeyCode, Action>
         {
         {KeyCode.LeftArrow, movementController.MoveCharacterLeft},
@@ -135,6 +140,7 @@ public class GameManager : MonoBehaviour
                 break;
             }
         }
+#endif
     }
 
     private IEnumerator PlayerTurn()
@@ -228,6 +234,7 @@ public class GameManager : MonoBehaviour
                 if (enableLogs)
                     Debug.Log("Player " + (i + 1) + " has died.");
 
+                OnPlayerDeath?.Invoke();
                 playerDeadFlags[i] = true;
 
                 if (players[i].IsEnemy)
@@ -243,11 +250,5 @@ public class GameManager : MonoBehaviour
                 movementController.RemovePositionAfterDeath(i, turn);
             }
         }
-    }
-
-    //TODO: MAYBE I CAN DO THIS BETTER
-    public int GetPlayerNumber()
-    {
-        return turn;
     }
 }

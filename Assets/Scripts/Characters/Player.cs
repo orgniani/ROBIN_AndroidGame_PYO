@@ -53,11 +53,6 @@ public class Player : MonoBehaviour
         }
     }
 
-    public void SetGridPosition(Vector2Int newPosition)
-    {
-        GridPosition = newPosition;
-    }
-
     public int GetMaxSpeed()
     {
         return maxSpeed;
