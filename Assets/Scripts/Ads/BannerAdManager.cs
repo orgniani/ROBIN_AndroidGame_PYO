@@ -7,6 +7,24 @@ public class BannerAdManager : AdManager
     [SerializeField] private string bannerAndroidAdUnitId = "Banner_Android";
     [SerializeField] private string bannerIOSAdUnitId = "Banner_iOS";
 
+    private static BannerAdManager instance;
+
+    protected override void Awake()
+    {
+        if (instance == null)
+        {
+            instance = this;
+            DontDestroyOnLoad(gameObject);
+
+            base.Awake();
+        }
+        else
+        {
+            Destroy(gameObject);
+            return;
+        }
+    }
+
     private void OnEnable()
     {
         OnUnityAdsInitialized += InitializeBanner;

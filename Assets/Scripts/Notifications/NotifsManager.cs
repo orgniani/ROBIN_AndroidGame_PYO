@@ -1,5 +1,6 @@
 using System.Collections;
 using UnityEngine;
+using System.ComponentModel;
 
 #if UNITY_ANDROID
 using Unity.Notifications.Android;
@@ -8,6 +9,22 @@ public class NotifsManager : MonoBehaviour
 {
     private const string GROUP_ID = "Main";
     private const string CHANNEL_ID = "Notification";
+
+    private static NotifsManager instance;
+
+    private void Awake()
+    {
+        if(instance == null)
+        {
+            instance = this;
+            DontDestroyOnLoad(gameObject);
+        }
+
+        else
+        {
+            Destroy(gameObject);
+        }
+    }
 
     private void Start()
     {

@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.Advertisements;
+using UnityEngine.SceneManagement;
 
 public class InterstitialAdManager : AdManager, IUnityAdsLoadListener, IUnityAdsShowListener
 {
@@ -10,16 +11,55 @@ public class InterstitialAdManager : AdManager, IUnityAdsLoadListener, IUnityAds
     [Header("Managers")]
     [SerializeField] private GameManager gameManager;
 
+    private static InterstitialAdManager instance;
+
+    protected override void Awake()
+    {
+        if (instance == null)
+        {
+            instance = this;
+            DontDestroyOnLoad(gameObject);
+
+            base.Awake();
+        }
+        else
+        {
+            Destroy(gameObject);
+            return;
+        }
+    }
+
     private void OnEnable()
     {
+        SceneManager.sceneLoaded += OnSceneLoaded;
         OnUnityAdsInitialized += InitializeInterstitial;
-        gameManager.OnGameOver += ShowInterstitial;
     }
 
     private void OnDisable()
     {
+        SceneManager.sceneLoaded -= OnSceneLoaded;
         OnUnityAdsInitialized -= InitializeInterstitial;
-        gameManager.OnGameOver -= ShowInterstitial;
+
+        if (gameManager != null)
+            gameManager.OnGameOver -= ShowInterstitial;
+    }
+
+    private void OnSceneLoaded(Scene scene, LoadSceneMode mode)
+    {
+        FindGameManager();
+    }
+
+    private void FindGameManager()
+    {
+        gameManager = FindObjectOfType<GameManager>();
+        if (gameManager == null)
+        {
+            Debug.LogError("GameManager not found in the scene.");
+        }
+        else
+        {
+            gameManager.OnGameOver += ShowInterstitial;
+        }
     }
 
     protected override void SetIDs()
@@ -40,6 +80,8 @@ public class InterstitialAdManager : AdManager, IUnityAdsLoadListener, IUnityAds
     {
         if (adLoaded)
             Advertisement.Show(adUnitId, this);
+        else
+            Debug.Log($"Interstitial: Error loading Ad");
     }
 
     public void OnUnityAdsAdLoaded(string placementId)

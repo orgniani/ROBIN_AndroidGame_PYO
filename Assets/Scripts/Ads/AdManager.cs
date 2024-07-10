@@ -10,10 +10,20 @@ public abstract class AdManager : MonoBehaviour, IUnityAdsInitializationListener
 
     protected string adUnitId;
     protected bool adLoaded = false;
-
+    
     protected static event Action OnUnityAdsInitialized;
 
-    private void Awake()
+    protected virtual void Awake()
+    {
+        InitializeAds();
+    }
+
+    private void Start()
+    {
+        SetIDs();
+    }
+
+    private void InitializeAds()
     {
 #if UNITY_IOS
         gameId = "5629789";
@@ -27,11 +37,6 @@ public abstract class AdManager : MonoBehaviour, IUnityAdsInitializationListener
         {
             Advertisement.Initialize(gameId, true, this);
         }
-    }
-
-    private void Start()
-    {
-        SetIDs();
     }
 
     public void OnInitializationComplete()
