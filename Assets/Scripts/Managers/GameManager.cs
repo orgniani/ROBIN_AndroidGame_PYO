@@ -11,6 +11,10 @@ public class GameManager : MonoBehaviour
     [Header("References")]
     [SerializeField] private ActionController actionController;
     [SerializeField] private GameView gameView;
+    [SerializeField] private GameObject buttonBlocker;
+
+    [Header("Preferences")]
+    [SerializeField] private float switchPlayerCooldown = 2f;
 
     [Header("Logs")]
     [SerializeField] private bool enableLogs = false;
@@ -47,6 +51,8 @@ public class GameManager : MonoBehaviour
 
     private void OnEnable()
     {
+        buttonBlocker.SetActive(false);
+
         for (int i = 0; i < players.Count; i++)
         {
             players[i].onDead += KillCounter;
@@ -139,7 +145,9 @@ public class GameManager : MonoBehaviour
 
             movementController.StoreCharacterPosition(turn);
 
-            yield return new WaitForSeconds(1f);
+            buttonBlocker.SetActive(true);
+            yield return new WaitForSeconds(switchPlayerCooldown);
+            buttonBlocker.SetActive(false);
         }
 
         CheckIfGameOver();
@@ -240,6 +248,14 @@ public class GameManager : MonoBehaviour
         if (!gameView)
         {
             Debug.LogError($"{name}: {nameof(gameView)} is null!" +
+                           $"\nDisabling object to avoid errors.");
+            enabled = false;
+            return;
+        }
+
+        if (!buttonBlocker)
+        {
+            Debug.LogError($"{name}: {nameof(buttonBlocker)} is null!" +
                            $"\nDisabling object to avoid errors.");
             enabled = false;
             return;

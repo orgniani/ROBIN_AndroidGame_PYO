@@ -1,3 +1,4 @@
+using System.Collections.Generic;
 using UnityEngine;
 
 public class SoundEffectsManager : MonoBehaviour
@@ -42,23 +43,24 @@ public class SoundEffectsManager : MonoBehaviour
 
         actionController.OnActionChosen -= HandleActionSound;
     }
+
     private void HandleGameOverSound(GameOverReason reason, Player player)
     {
         switch (reason)
         {
             case GameOverReason.WIN:
-                audioSource.PlayOneShot(win);
+                PlaySound(win);
                 break;
 
             case GameOverReason.LOSE:
-                audioSource.PlayOneShot(lose);
+                PlaySound(lose);
                 break;
         }
     }
 
     private void HandleDeathSound()
     {
-        audioSource.PlayOneShot(death);
+        PlaySound(death);
     }
 
     private void HandleActionSound(Player attacker, ActionType actionType, Player target)
@@ -66,27 +68,33 @@ public class SoundEffectsManager : MonoBehaviour
         switch (actionType)
         {
             case ActionType.HEAL:
-                audioSource.PlayOneShot(heal);
+                PlaySound(heal);
                 break;
 
             case ActionType.RANGE_ATTACK:
-                audioSource.PlayOneShot(rangeAttack);
+                PlaySound(rangeAttack);
                 break;
 
             case ActionType.MELEE_ATTACK:
-                audioSource.PlayOneShot(meleeAttack);
+                PlaySound(meleeAttack);
                 break;
         }
     }
 
     public void OnPressPlay()
     {
-        audioSource.PlayOneShot(pressPlay);
+        PlaySound(pressPlay);
     }
 
     public void OnPressButton()
     {
-        audioSource.PlayOneShot(pressButton);
+        PlaySound(pressButton);
+    }
+
+    private void PlaySound(AudioClip clip)
+    {
+        if (clip == null) return;
+        audioSource.PlayOneShot(clip);
     }
 
     private void ValidateReferences()
