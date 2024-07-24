@@ -29,42 +29,20 @@ public class GameManager : MonoBehaviour
     private MovementController movementController;
 
     public MovementController MovementController => movementController;
-    public int currentPlayerNumber => turn;
 
     public bool IsWaitingForMovement { set; get; } 
 
     public bool GameOver { get; private set; }
 
-    public event Action<GameOverReason> OnGameOver;
+    public event Action<Player> OnUpdatePlayer;
+    public event Action<GameOverReason, Player> OnGameOver;
     public event Action OnPlayerDeath;
 
     private void Awake()
     {
         Application.targetFrameRate = 60;
 
-        if (!actionController)
-        {
-            Debug.LogError($"{name}: {nameof(actionController)} is null!" +
-                           $"\nDisabling object to avoid errors.");
-            enabled = false;
-            return;
-        }
-
-        if (!gameView)
-        {
-            Debug.LogError($"{name}: {nameof(gameView)} is null!" +
-                           $"\nDisabling object to avoid errors.");
-            enabled = false;
-            return;
-        }
-
-        if (players.Count <= 0)
-        {
-            Debug.LogError($"{name}: There are no players in the players list!" +
-               $"\nDisabling object to avoid errors.");
-            enabled = false;
-            return;
-        }
+        ValidateReferences();
     }
 
     private void OnEnable()
@@ -152,6 +130,7 @@ public class GameManager : MonoBehaviour
         if (!currentPlayerIsDead)
         {
             UpdateCharacter();
+            OnUpdatePlayer?.Invoke(currentPlayer);
 
             movementController.UpdateCharacterPosition(turn);
 
@@ -159,6 +138,8 @@ public class GameManager : MonoBehaviour
             yield return WaitForAction();
 
             movementController.StoreCharacterPosition(turn);
+
+            yield return new WaitForSeconds(1f);
         }
 
         CheckIfGameOver();
@@ -204,22 +185,16 @@ public class GameManager : MonoBehaviour
     {
         if (playerCounter == 1)
         {
-            if (enableLogs)
-                Debug.Log("PLAYER " + turn + " WINS!!!");
-
             GameOver = true;
-            OnGameOver?.Invoke(GameOverReason.WIN);
+            OnGameOver?.Invoke(GameOverReason.WIN, currentPlayer);
 
             actionController.gameObject.SetActive(false);
         }
 
         else if (playerCounter < playersTotal && enemiesCounter > 0)
         {
-            if (enableLogs)
-                Debug.Log("EVERYBODY LOSES!!!");
-
             GameOver = true;
-            OnGameOver?.Invoke(GameOverReason.LOSE);
+            OnGameOver?.Invoke(GameOverReason.LOSE, currentPlayer);
 
             actionController.gameObject.SetActive(false);
         }
@@ -249,6 +224,33 @@ public class GameManager : MonoBehaviour
 
                 movementController.RemovePositionAfterDeath(i, turn);
             }
+        }
+    }
+
+    private void ValidateReferences()
+    {
+        if (!actionController)
+        {
+            Debug.LogError($"{name}: {nameof(actionController)} is null!" +
+                           $"\nDisabling object to avoid errors.");
+            enabled = false;
+            return;
+        }
+
+        if (!gameView)
+        {
+            Debug.LogError($"{name}: {nameof(gameView)} is null!" +
+                           $"\nDisabling object to avoid errors.");
+            enabled = false;
+            return;
+        }
+
+        if (players.Count <= 0)
+        {
+            Debug.LogError($"{name}: There are no players in the players list!" +
+                           $"\nDisabling object to avoid errors.");
+            enabled = false;
+            return;
         }
     }
 }

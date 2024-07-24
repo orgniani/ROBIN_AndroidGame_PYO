@@ -57,49 +57,69 @@ SpriteAtlas:
     - {fileID: 2800000, guid: f69257c134224324aaf9531cd33a0a01, type: 3}
     - {fileID: 2800000, guid: 689ec79e4e73690438bfc9d5457cb85d, type: 3}
     - {fileID: 2800000, guid: 53ab843049aa9304c80dcc0d68b42cbd, type: 3}
+    - {fileID: 2800000, guid: 8f13451b11bb8924a8904b24e4c00ac4, type: 3}
+    - {fileID: 2800000, guid: 68fcaaaa21fda3f448dd8f6b4bbd31e7, type: 3}
+    - {fileID: 2800000, guid: 6cab1ea269a47ea468d608c8e70da36f, type: 3}
+    - {fileID: 2800000, guid: aab7b7f1d55b5b242bfc2e225f707dd0, type: 3}
+    - {fileID: 2800000, guid: 71152f0f6e26e434ba70a0c35413aa21, type: 3}
     bindAsDefault: 1
     isAtlasV2: 0
     cachedData: {fileID: 0}
     packedSpriteRenderDataKeys:
     - 53ab843049aa9304c80dcc0d68b42cbd: 21300000
     - f69257c134224324aaf9531cd33a0a01: 21300000
+    - aab7b7f1d55b5b242bfc2e225f707dd0: 21300000
     - c8145c02d35c92e4ea6a791b089e5b8d: 21300000
+    - 6cab1ea269a47ea468d608c8e70da36f: 21300000
     - 8aa4e77389198ad48a9180deb63292b5: 21300000
     - 3e5f4d2767839324e8a457a11c2124dd: 21300000
     - 941526370d7e08c4cb21dabb151d5198: 21300000
+    - 68fcaaaa21fda3f448dd8f6b4bbd31e7: 21300000
+    - 8f13451b11bb8924a8904b24e4c00ac4: 21300000
     - 0812cdfb38a2a42419e72319d6dd7d52: 21300000
     - 67cfb02c6abc24647be2c8d746b62e57: 21300000
     - 73c43e7ec71112a4e9d818bf5fe7d998: 21300000
     - 689ec79e4e73690438bfc9d5457cb85d: 21300000
     - eadc02eea0bc15542bc349eafa2d1158: 21300000
     - c2130b0f4210d024c8e4e278eeeb6506: 21300000
+    - 71152f0f6e26e434ba70a0c35413aa21: 21300000
   m_MasterAtlas: {fileID: 0}
   m_PackedSprites:
   - {fileID: 21300000, guid: 53ab843049aa9304c80dcc0d68b42cbd, type: 3}
   - {fileID: 21300000, guid: f69257c134224324aaf9531cd33a0a01, type: 3}
+  - {fileID: 21300000, guid: aab7b7f1d55b5b242bfc2e225f707dd0, type: 3}
   - {fileID: 21300000, guid: c8145c02d35c92e4ea6a791b089e5b8d, type: 3}
+  - {fileID: 21300000, guid: 6cab1ea269a47ea468d608c8e70da36f, type: 3}
   - {fileID: 21300000, guid: 8aa4e77389198ad48a9180deb63292b5, type: 3}
   - {fileID: 21300000, guid: 3e5f4d2767839324e8a457a11c2124dd, type: 3}
   - {fileID: 21300000, guid: 941526370d7e08c4cb21dabb151d5198, type: 3}
+  - {fileID: 21300000, guid: 68fcaaaa21fda3f448dd8f6b4bbd31e7, type: 3}
+  - {fileID: 21300000, guid: 8f13451b11bb8924a8904b24e4c00ac4, type: 3}
   - {fileID: 21300000, guid: 0812cdfb38a2a42419e72319d6dd7d52, type: 3}
   - {fileID: 21300000, guid: 67cfb02c6abc24647be2c8d746b62e57, type: 3}
   - {fileID: 21300000, guid: 73c43e7ec71112a4e9d818bf5fe7d998, type: 3}
   - {fileID: 21300000, guid: 689ec79e4e73690438bfc9d5457cb85d, type: 3}
   - {fileID: 21300000, guid: eadc02eea0bc15542bc349eafa2d1158, type: 3}
   - {fileID: 21300000, guid: c2130b0f4210d024c8e4e278eeeb6506, type: 3}
+  - {fileID: 21300000, guid: 71152f0f6e26e434ba70a0c35413aa21, type: 3}
   m_PackedSpriteNamesToIndex:
   - banner
   - homeIcon
+  - healerIcon
   - buttonSquare
+  - fighterIcon
   - starIcon
   - button
   - healer
+  - enemy2Icon
+  - enemy1Icon
   - fighter
   - enemy1
   - enemy2
   - arrowIcon
   - range
   - gridCell
+  - rangeIcon
   m_RenderDataMap: {}
   m_Tag: SpriteAtlas_Game
   m_IsVariant: 0

@@ -18,9 +18,6 @@ public class ActionController : MonoBehaviour
     [SerializeField] private float meleeDistance = 1f;
     [SerializeField] private float enemyTimeoutDuration = 3f;
 
-    [Header("Logs")]
-    [SerializeField] private bool enableLogs = true;
-
     private List<Player> allPlayers = new List<Player>();
     private Player currentPlayer;
     private Player target;
@@ -31,43 +28,14 @@ public class ActionController : MonoBehaviour
 
     private int round = 0;
 
-    public event Action<ActionType> OnActionChosen;
+    public event Action<Player, ActionType, Player> OnActionChosen;
+    public event Action OnActionFailed;
 
     public bool HasChosenAction { private set; get; }
 
     private void Awake()
     {
-        if (!gameManager)
-        {
-            Debug.LogError($"{name}: {nameof(gameManager)} is null!" +
-                           $"\nDisabling object to avoid errors.");
-            enabled = false;
-            return;
-        }
-
-        if (!rangeButton)
-        {
-            Debug.LogError($"{name}: {nameof(rangeButton)} is null!" +
-                           $"\nDisabling object to avoid errors.");
-            enabled = false;
-            return;
-        }
-
-        if (!border)
-        {
-            Debug.LogError($"{name}: {nameof(border)} is null!" +
-                           $"\nDisabling object to avoid errors.");
-            enabled = false;
-            return;
-        }
-
-        if (!enemyBorder)
-        {
-            Debug.LogError($"{name}: {nameof(enemyBorder)} is null!" +
-                           $"\nDisabling object to avoid errors.");
-            enabled = false;
-            return;
-        }
+        ValidateReferences();
     }
 
     public void Initialize(List<Player> players)
@@ -107,7 +75,7 @@ public class ActionController : MonoBehaviour
         if (currentActionCoroutine != null)
             StopCoroutine(currentActionCoroutine);
 
-        currentActionCoroutine = StartCoroutine(PlayerAction(currentPlayer.RangeAttack, ActionType.RANGE));
+        currentActionCoroutine = StartCoroutine(PlayerAction(currentPlayer.RangeAttack, ActionType.RANGE_ATTACK));
     }
 
     public void OnMeleeAttack()
@@ -117,7 +85,7 @@ public class ActionController : MonoBehaviour
         if (currentActionCoroutine != null)
             StopCoroutine(currentActionCoroutine);
 
-        currentActionCoroutine = StartCoroutine(PlayerAction(currentPlayer.MeleeAttack, ActionType.MELEE));
+        currentActionCoroutine = StartCoroutine(PlayerAction(currentPlayer.MeleeAttack, ActionType.MELEE_ATTACK));
     }
 
     public void OnHeal()
@@ -146,7 +114,7 @@ public class ActionController : MonoBehaviour
         }
 
         action(target);
-        OnActionChosen?.Invoke(actionType);
+        OnActionChosen?.Invoke(currentPlayer, actionType, target);
         HasChosenAction = true;
         currentActionCoroutine = null;
     }
@@ -177,8 +145,7 @@ public class ActionController : MonoBehaviour
 
         if (target == null)
         {
-            if(enableLogs)
-                Debug.Log("Target selection timed out.");
+            OnActionFailed?.Invoke();
 
             HasChosenAction = true;
             currentActionCoroutine = null;
@@ -198,9 +165,6 @@ public class ActionController : MonoBehaviour
         if (closestTarget != null)
         {
             round++;
-
-            if (enableLogs)
-                Debug.Log(round + " - " + currentPlayer.name + " has Chosen Target: " + closestTarget.name);
         }
 
         target = closestTarget;
@@ -258,6 +222,41 @@ public class ActionController : MonoBehaviour
         else if (distance == minDistance)
         {
             closestTargets.Add(targetPlayer);
+        }
+    }
+
+    private void ValidateReferences()
+    {
+        if (!gameManager)
+        {
+            Debug.LogError($"{name}: {nameof(gameManager)} is null!" +
+                           $"\nDisabling object to avoid errors.");
+            enabled = false;
+            return;
+        }
+
+        if (!rangeButton)
+        {
+            Debug.LogError($"{name}: {nameof(rangeButton)} is null!" +
+                           $"\nDisabling object to avoid errors.");
+            enabled = false;
+            return;
+        }
+
+        if (!border)
+        {
+            Debug.LogError($"{name}: {nameof(border)} is null!" +
+                           $"\nDisabling object to avoid errors.");
+            enabled = false;
+            return;
+        }
+
+        if (!enemyBorder)
+        {
+            Debug.LogError($"{name}: {nameof(enemyBorder)} is null!" +
+                           $"\nDisabling object to avoid errors.");
+            enabled = false;
+            return;
         }
     }
 }

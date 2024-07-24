@@ -26,11 +26,11 @@ public abstract class AdManager : MonoBehaviour, IUnityAdsInitializationListener
     private void InitializeAds()
     {
 #if UNITY_IOS
-        gameId = "5629789";
+        gameId = "5655527";
 #elif UNITY_ANDROID
-        gameId = "5629788";
+        gameId = "5655526";
 #elif UNITY_EDITOR
-        gameId = "5629788";
+        gameId = "5655526";
 #endif
 
         if (!Advertisement.isInitialized && Advertisement.isSupported)

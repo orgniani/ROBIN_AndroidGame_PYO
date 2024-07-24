@@ -78,7 +78,7 @@ public class InterstitialAdManager : AdManager, IUnityAdsLoadListener, IUnityAds
         Advertisement.Load(adUnitId, this);
     }
 
-    public void ShowInterstitial(GameOverReason reason)
+    public void ShowInterstitial(GameOverReason reason, Player p)
     {
         if (adLoaded)
             Advertisement.Show(adUnitId, this);

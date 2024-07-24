@@ -1,7 +1,6 @@
 public enum ActionType
 {
-    MELEE = 0,
-    RANGE,
+    MELEE_ATTACK = 0,
+    RANGE_ATTACK,
     HEAL,
 }
-

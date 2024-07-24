@@ -1,10 +1,14 @@
+using System;
 using TMPro;
+using UnityEditor.Experimental.GraphView;
 using UnityEngine;
 using UnityEngine.UI;
+using static UnityEngine.GraphicsBuffer;
 
 public class UIManager : MonoBehaviour
 {
     [Header("References")]
+    [SerializeField] private ActionController actionController;
     [SerializeField] private LevelManager levelManager;
     [SerializeField] private Slider loadBar;
 
@@ -22,6 +26,9 @@ public class UIManager : MonoBehaviour
     [SerializeField] private TMP_Text gameOverText;
     [SerializeField] private TMP_Text timeText;
 
+    [SerializeField] private TMP_Text playerTurnText;
+    [SerializeField] private TMP_Text playerActionText;
+
     private GameManager gameManager;
 
     private float startTime;
@@ -31,95 +38,25 @@ public class UIManager : MonoBehaviour
     {
         gameManager = GetComponent<GameManager>();
 
-        if (!levelManager)
-        {
-            Debug.LogError($"{name}: {nameof(levelManager)} is null!" +
-                           $"\nDisabling object to avoid errors.");
-            enabled = false;
-            return;
-        }
-
-        if (!loadBar)
-        {
-            Debug.LogError($"{name}: {nameof(loadBar)} is null!" +
-                           $"\nDisabling object to avoid errors.");
-            enabled = false;
-            return;
-        }
-
-        if (!mainMenuCanvas)
-        {
-            Debug.LogError($"{name}: {nameof(mainMenuCanvas)} is null!" +
-                           $"\nDisabling object to avoid errors.");
-            enabled = false;
-            return;
-        }
-
-        if (!creditsCanvas)
-        {
-            Debug.LogError($"{name}: {nameof(creditsCanvas)} is null!" +
-                           $"\nDisabling object to avoid errors.");
-            enabled = false;
-            return;
-        }
-
-        if (!howToPlayCanvas)
-        {
-            Debug.LogError($"{name}: {nameof(howToPlayCanvas)} is null!" +
-                           $"\nDisabling object to avoid errors.");
-            enabled = false;
-            return;
-        }
-
-        if (!gameOverCanvas)
-        {
-            Debug.LogError($"{name}: {nameof(gameOverCanvas)} is null!" +
-                           $"\nDisabling object to avoid errors.");
-            enabled = false;
-            return;
-        }
-
-        if (!warningCanvas)
-        {
-            Debug.LogError($"{name}: {nameof(warningCanvas)} is null!" +
-                           $"\nDisabling object to avoid errors.");
-            enabled = false;
-            return;
-        }
-
-        if (!loadingCanvas)
-        {
-            Debug.LogError($"{name}: {nameof(loadingCanvas)} is null!" +
-                           $"\nDisabling object to avoid errors.");
-            enabled = false;
-            return;
-        }
-
-        if (!gameOverText)
-        {
-            Debug.LogError($"{name}: {nameof(gameOverText)} is null!" +
-                           $"\nDisabling object to avoid errors.");
-            enabled = false;
-            return;
-        }
-
-        if (!timeText)
-        {
-            Debug.LogError($"{name}: {nameof(timeText)} is null!" +
-                           $"\nDisabling object to avoid errors.");
-            enabled = false;
-            return;
-        }
+        ValidateReferences();
     }
 
     private void OnEnable()
     {
         gameManager.OnGameOver += HandleGameOverCanvas;
+        gameManager.OnUpdatePlayer += UpdatePlayerTurnText;
+
+        actionController.OnActionChosen += HandleActionText;
+        actionController.OnActionFailed += HandleActionFailedText;
     }
 
     private void OnDisable()
     {
         gameManager.OnGameOver -= HandleGameOverCanvas;
+        gameManager.OnUpdatePlayer -= UpdatePlayerTurnText;
+
+        actionController.OnActionChosen -= HandleActionText;
+        actionController.OnActionFailed -= HandleActionFailedText;
     }
 
     private void Start()
@@ -157,12 +94,12 @@ public class UIManager : MonoBehaviour
         timeText.text = $"{minutes:D2}:{seconds:D2}";
     }
 
-    private void HandleGameOverCanvas(GameOverReason reason)
+    private void HandleGameOverCanvas(GameOverReason reason, Player player)
     {
         switch(reason)
         {
             case GameOverReason.WIN:
-                gameOverText.text = $"Player " + gameManager.currentPlayerNumber + " has won!";
+                gameOverText.text = $"The { player.TitleTag } has won!";
                 break;
 
             case GameOverReason.LOSE:
@@ -172,6 +109,25 @@ public class UIManager : MonoBehaviour
 
         OnOpenAndCloseCanvas(gameOverCanvas);
         isCounting = false;
+    }
+
+    private void UpdatePlayerTurnText(Player player)
+    {
+        playerTurnText.text = $"{player.TitleTag}'s turn";
+        playerActionText.text = $"";
+    }
+
+    private void HandleActionText(Player attacker, ActionType actionType, Player target)
+    {
+        string actionDescription = actionType.ToString().Replace("_", " ").ToLower();
+        string targetDescription = (attacker.TitleTag == target.TitleTag) ? "self" : target.TitleTag;
+
+        playerActionText.text = $"{attacker.TitleTag} used { actionDescription } on { targetDescription }."; 
+    }
+
+    private void HandleActionFailedText()
+    {
+        playerActionText.text = "Targets out of range! No action.";
     }
 
     //Movement Buttons
@@ -240,6 +196,97 @@ public class UIManager : MonoBehaviour
         else
         {
             canvas.SetActive(true);
+        }
+    }
+
+    private void ValidateReferences()
+    {
+        if (!levelManager)
+        {
+            Debug.LogError($"{name}: {nameof(levelManager)} is null!" +
+                           $"\nDisabling object to avoid errors.");
+            enabled = false;
+            return;
+        }
+
+        if (!loadBar)
+        {
+            Debug.LogError($"{name}: {nameof(loadBar)} is null!" +
+                           $"\nDisabling object to avoid errors.");
+            enabled = false;
+            return;
+        }
+
+        if (!actionController)
+        {
+            Debug.LogError($"{name}: {nameof(actionController)} is null!" +
+                           $"\nDisabling object to avoid errors.");
+            enabled = false;
+            return;
+        }
+
+        if (!mainMenuCanvas)
+        {
+            Debug.LogError($"{name}: {nameof(mainMenuCanvas)} is null!" +
+                           $"\nDisabling object to avoid errors.");
+            enabled = false;
+            return;
+        }
+
+        if (!creditsCanvas)
+        {
+            Debug.LogError($"{name}: {nameof(creditsCanvas)} is null!" +
+                           $"\nDisabling object to avoid errors.");
+            enabled = false;
+            return;
+        }
+
+        if (!howToPlayCanvas)
+        {
+            Debug.LogError($"{name}: {nameof(howToPlayCanvas)} is null!" +
+                           $"\nDisabling object to avoid errors.");
+            enabled = false;
+            return;
+        }
+
+        if (!gameOverCanvas)
+        {
+            Debug.LogError($"{name}: {nameof(gameOverCanvas)} is null!" +
+                           $"\nDisabling object to avoid errors.");
+            enabled = false;
+            return;
+        }
+
+        if (!warningCanvas)
+        {
+            Debug.LogError($"{name}: {nameof(warningCanvas)} is null!" +
+                           $"\nDisabling object to avoid errors.");
+            enabled = false;
+            return;
+        }
+
+        if (!loadingCanvas)
+        {
+            Debug.LogError($"{name}: {nameof(loadingCanvas)} is null!" +
+                           $"\nDisabling object to avoid errors.");
+            enabled = false;
+            return;
+        }
+
+        if (!gameOverText)
+        {
+            Debug.LogError($"{name}: {nameof(gameOverText)} is null!" +
+                           $"\nDisabling object to avoid errors.");
+            enabled = false;
+            return;
+        }
+
+        if (!timeText)
+        {
+            Debug.LogError($"{name}: {nameof(timeText)} is null!" +
+                           $"\nDisabling object to avoid errors.");
+            enabled = false;
+            return;
         }
     }
 }

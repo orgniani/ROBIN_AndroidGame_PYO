@@ -24,6 +24,73 @@ public class SoundEffectsManager : MonoBehaviour
     {
         audioSource = GetComponent<AudioSource>();
 
+        ValidateReferences();
+    }
+
+    private void OnEnable()
+    {
+        gameManager.OnGameOver += HandleGameOverSound;
+        gameManager.OnPlayerDeath += HandleDeathSound;
+
+        actionController.OnActionChosen += HandleActionSound;
+    }
+
+    private void OnDisable()
+    {
+        gameManager.OnGameOver -= HandleGameOverSound;
+        gameManager.OnPlayerDeath -= HandleDeathSound;
+
+        actionController.OnActionChosen -= HandleActionSound;
+    }
+    private void HandleGameOverSound(GameOverReason reason, Player player)
+    {
+        switch (reason)
+        {
+            case GameOverReason.WIN:
+                audioSource.PlayOneShot(win);
+                break;
+
+            case GameOverReason.LOSE:
+                audioSource.PlayOneShot(lose);
+                break;
+        }
+    }
+
+    private void HandleDeathSound()
+    {
+        audioSource.PlayOneShot(death);
+    }
+
+    private void HandleActionSound(Player attacker, ActionType actionType, Player target)
+    {
+        switch (actionType)
+        {
+            case ActionType.HEAL:
+                audioSource.PlayOneShot(heal);
+                break;
+
+            case ActionType.RANGE_ATTACK:
+                audioSource.PlayOneShot(rangeAttack);
+                break;
+
+            case ActionType.MELEE_ATTACK:
+                audioSource.PlayOneShot(meleeAttack);
+                break;
+        }
+    }
+
+    public void OnPressPlay()
+    {
+        audioSource.PlayOneShot(pressPlay);
+    }
+
+    public void OnPressButton()
+    {
+        audioSource.PlayOneShot(pressButton);
+    }
+
+    private void ValidateReferences()
+    {
         if (!gameManager)
         {
             Debug.LogError($"{name}: {nameof(gameManager)} is null!" +
@@ -105,67 +172,5 @@ public class SoundEffectsManager : MonoBehaviour
             enabled = false;
             return;
         }
-    }
-
-    private void OnEnable()
-    {
-        gameManager.OnGameOver += HandleGameOverSound;
-        gameManager.OnPlayerDeath += HandleDeathSound;
-
-        actionController.OnActionChosen += HandleActionSound;
-    }
-
-    private void OnDisable()
-    {
-        gameManager.OnGameOver -= HandleGameOverSound;
-        gameManager.OnPlayerDeath -= HandleDeathSound;
-
-        actionController.OnActionChosen -= HandleActionSound;
-    }
-    private void HandleGameOverSound(GameOverReason reason)
-    {
-        switch (reason)
-        {
-            case GameOverReason.WIN:
-                audioSource.PlayOneShot(win);
-                break;
-
-            case GameOverReason.LOSE:
-                audioSource.PlayOneShot(lose);
-                break;
-        }
-    }
-
-    private void HandleDeathSound()
-    {
-        audioSource.PlayOneShot(death);
-    }
-
-    private void HandleActionSound(ActionType actionType)
-    {
-        switch (actionType)
-        {
-            case ActionType.HEAL:
-                audioSource.PlayOneShot(heal);
-                break;
-
-            case ActionType.RANGE:
-                audioSource.PlayOneShot(rangeAttack);
-                break;
-
-            case ActionType.MELEE:
-                audioSource.PlayOneShot(meleeAttack);
-                break;
-        }
-    }
-
-    public void OnPressPlay()
-    {
-        audioSource.PlayOneShot(pressPlay);
-    }
-
-    public void OnPressButton()
-    {
-        audioSource.PlayOneShot(pressButton);
     }
 }

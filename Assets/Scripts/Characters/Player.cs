@@ -4,6 +4,7 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     [Header("Parameters")]
+    [SerializeField] private string titleTag = "Fighter";
     [SerializeField] private int maxSpeed;
     [SerializeField] private int health = 1;
 
@@ -30,27 +31,15 @@ public class Player : MonoBehaviour
 
     public bool IsEnemy => isEnemy;
 
+    public string TitleTag => titleTag;
+
     public int Health => health;
 
     public Vector2Int GridPosition { get; set; }
 
     private void Awake()
     {
-        if (!icon)
-        {
-            Debug.LogError($"{name}: {nameof(icon)} is null!" +
-                           $"\nDisabling object to avoid errors.");
-            enabled = false;
-            return;
-        }
-
-        if (!statBox)
-        {
-            Debug.LogError($"{name}: {nameof(statBox)} is null!" +
-                           $"\nDisabling object to avoid errors.");
-            enabled = false;
-            return;
-        }
+        ValidateReferences();
     }
 
     public int GetMaxSpeed()
@@ -135,5 +124,24 @@ public class Player : MonoBehaviour
         Destroy(icon);
 
         gameObject.SetActive(false);
+    }
+
+    private void ValidateReferences()
+    {
+        if (!icon)
+        {
+            Debug.LogError($"{name}: {nameof(icon)} is null!" +
+                           $"\nDisabling object to avoid errors.");
+            enabled = false;
+            return;
+        }
+
+        if (!statBox)
+        {
+            Debug.LogError($"{name}: {nameof(statBox)} is null!" +
+                           $"\nDisabling object to avoid errors.");
+            enabled = false;
+            return;
+        }
     }
 }
