@@ -4,13 +4,16 @@ using UnityEngine.UI;
 public class UIButtonHandler : IButtonHandler
 {
     private readonly GameManager gameManager;
+    private readonly MovementController movementController;
     private readonly LevelManager levelManager;
 
     private readonly Slider loadBar;
 
-    public UIButtonHandler(GameManager gameManager, LevelManager levelManager, Slider loadBar)
+    public UIButtonHandler(GameManager gameManager, MovementController movementController, LevelManager levelManager, Slider loadBar)
     {
         this.gameManager = gameManager;
+        this.movementController = movementController;
+
         this.levelManager = levelManager;
         this.loadBar = loadBar;
     }
@@ -18,25 +21,25 @@ public class UIButtonHandler : IButtonHandler
     public void OnMoveUp()
     {
         if (!gameManager.IsWaitingForMovement || gameManager.GameOver) return;
-        gameManager.MovementController.MoveCharacterUp();
+        movementController.MoveCharacterUp();
     }
 
     public void OnMoveDown()
     {
         if (!gameManager.IsWaitingForMovement || gameManager.GameOver) return;
-        gameManager.MovementController.MoveCharacterDown();
+        movementController.MoveCharacterDown();
     }
 
     public void OnMoveLeft()
     {
         if (!gameManager.IsWaitingForMovement || gameManager.GameOver) return;
-        gameManager.MovementController.MoveCharacterLeft();
+        movementController.MoveCharacterLeft();
     }
 
     public void OnMoveRight()
     {
         if (!gameManager.IsWaitingForMovement || gameManager.GameOver) return;
-        gameManager.MovementController.MoveCharacterRight();
+        movementController.MoveCharacterRight();
     }
 
     public void OnBackToMainMenu(GameObject loadingCanvas)

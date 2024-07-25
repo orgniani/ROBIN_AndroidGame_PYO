@@ -5,7 +5,6 @@ using UnityEngine.UI;
 public class UIManager : MonoBehaviour
 {
     [Header("References")]
-    [SerializeField] private ActionController actionController;
     [SerializeField] private LevelManager levelManager;
     [SerializeField] private Slider loadBar;
 
@@ -22,34 +21,28 @@ public class UIManager : MonoBehaviour
     [SerializeField] private TMP_Text playerActionText;
 
     private GameManager gameManager;
+    private ActionController actionController;
+    private MovementController movementController;
 
     private IButtonHandler buttonHandler;
     private ITimeCounter timeCounter;
     private ITextHandler textHandler;
 
-
     private void Awake()
     {
         gameManager = GetComponent<GameManager>();
-
-        buttonHandler = new UIButtonHandler(gameManager, levelManager, loadBar);
-        timeCounter = new UITimeCounter(timeText);
-        textHandler = new UITextHandler(gameOverText, playerTurnText, playerActionText);
-
         ValidateReferences();
     }
 
     private void OnEnable()
     {
-        gameManager.OnGameOver += HandleGameOverCanvas;
-        gameManager.OnUpdatePlayer += textHandler.UpdatePlayerTurnText;
-
-        actionController.OnActionChosen += textHandler.HandleActionText;
-        actionController.OnActionFailed += textHandler.HandleActionFailedText;
+        gameManager.OnInitialized += Initialize;
     }
 
     private void OnDisable()
     {
+        gameManager.OnInitialized -= Initialize;
+
         gameManager.OnGameOver -= HandleGameOverCanvas;
         gameManager.OnUpdatePlayer -= textHandler.UpdatePlayerTurnText;
 
@@ -74,7 +67,28 @@ public class UIManager : MonoBehaviour
         timeCounter.UpdateTimeText();
 
         if (!loadBar) return;
-        loadBar.value = (LoaderManager.Get().loadingProgress);
+        loadBar.value = (LoaderManager.GetLoaderManager().LoadingProgress);
+    }
+
+    private void Initialize()
+    {
+        actionController = gameManager.ActionController;
+        movementController = gameManager.MovementController;
+
+        buttonHandler = new UIButtonHandler(gameManager, movementController, levelManager, loadBar);
+        timeCounter = new UITimeCounter(timeText);
+        textHandler = new UITextHandler(gameOverText, playerTurnText, playerActionText);
+
+        SubscribeToEvents();
+    }
+
+    private void SubscribeToEvents()
+    {
+        gameManager.OnGameOver += HandleGameOverCanvas;
+        gameManager.OnUpdatePlayer += textHandler.UpdatePlayerTurnText;
+
+        actionController.OnActionChosen += textHandler.HandleActionText;
+        actionController.OnActionFailed += textHandler.HandleActionFailedText;
     }
 
     private void HandleGameOverCanvas(GameOverReason reason, Player player)
@@ -108,14 +122,6 @@ public class UIManager : MonoBehaviour
         if (!loadBar)
         {
             Debug.LogError($"{name}: {nameof(loadBar)} is null!" +
-                           $"\nDisabling object to avoid errors.");
-            enabled = false;
-            return;
-        }
-
-        if (!actionController)
-        {
-            Debug.LogError($"{name}: {nameof(actionController)} is null!" +
                            $"\nDisabling object to avoid errors.");
             enabled = false;
             return;

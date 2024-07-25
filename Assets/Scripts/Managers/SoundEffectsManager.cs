@@ -1,11 +1,9 @@
-using System.Collections.Generic;
 using UnityEngine;
 
 public class SoundEffectsManager : MonoBehaviour
 {
     [Header("References")]
     [SerializeField] private GameManager gameManager;
-    [SerializeField] private ActionController actionController;
 
     [Header("Audio clips")]
     [SerializeField] private AudioClip heal;
@@ -20,10 +18,12 @@ public class SoundEffectsManager : MonoBehaviour
     [SerializeField] private AudioClip lose;
 
     private AudioSource audioSource;
+    private ActionController actionController;
 
     private void Awake()
     {
         audioSource = GetComponent<AudioSource>();
+        actionController = gameManager.ActionController;
 
         ValidateReferences();
     }
@@ -99,86 +99,34 @@ public class SoundEffectsManager : MonoBehaviour
 
     private void ValidateReferences()
     {
+        if (!audioSource)
+        {
+            Debug.LogError($"{name}: {nameof(audioSource)} is missing!" +
+                           $"\nDisabling object to avoid errors.");
+            enabled = false;
+            return;
+        }
+
         if (!gameManager)
         {
             Debug.LogError($"{name}: {nameof(gameManager)} is null!" +
                            $"\nDisabling object to avoid errors.");
             enabled = false;
             return;
-
         }
 
-        if (!actionController)
-        {
-            Debug.LogError($"{name}: {nameof(actionController)} is null!" +
-                           $"\nDisabling object to avoid errors.");
-            enabled = false;
-            return;
+        ValidateAudioClips();
+    }
 
-        }
-
-        if (!heal)
-        {
-            Debug.LogError($"{name}: {nameof(heal)} is null!" +
-                           $"\nDisabling object to avoid errors.");
-            enabled = false;
-            return;
-        }
-
-        if (!rangeAttack)
-        {
-            Debug.LogError($"{name}: {nameof(rangeAttack)} is null!" +
-                           $"\nDisabling object to avoid errors.");
-            enabled = false;
-            return;
-        }
-
-        if (!meleeAttack)
-        {
-            Debug.LogError($"{name}: {nameof(meleeAttack)} is null!" +
-                           $"\nDisabling object to avoid errors.");
-            enabled = false;
-            return;
-        }
-
-        if (!death)
-        {
-            Debug.LogError($"{name}: {nameof(death)} is null!" +
-                           $"\nDisabling object to avoid errors.");
-            enabled = false;
-            return;
-        }
-
-        if (!pressPlay)
-        {
-            Debug.LogError($"{name}: {nameof(pressPlay)} is null!" +
-                           $"\nDisabling object to avoid errors.");
-            enabled = false;
-            return;
-        }
-
-        if (!pressButton)
-        {
-            Debug.LogError($"{name}: {nameof(pressButton)} is null!" +
-                           $"\nDisabling object to avoid errors.");
-            enabled = false;
-            return;
-        }
-
-        if (!win)
-        {
-            Debug.LogError($"{name}: {nameof(win)} is null!" +
-                           $"\nDisabling object to avoid errors.");
-            enabled = false;
-            return;
-        }
-
-        if (!lose)
-        {
-            Debug.LogError($"{name}: {nameof(lose)} is null!" +
-                           $"\nDisabling object to avoid errors.");
-            enabled = false;
-            return;
-        }
+    private void ValidateAudioClips()
+    {
+        if (heal == null) Debug.LogError($"{name}: {nameof(heal)} audio clip is missing.");
+        if (rangeAttack == null) Debug.LogError($"{name}: {nameof(rangeAttack)} audio clip is missing.");
+        if (meleeAttack == null) Debug.LogError($"{name}: {nameof(meleeAttack)} audio clip is missing.");
+        if (death == null) Debug.LogError($"{name}: {nameof(death)}  audio clip is missing.");
+        if (pressPlay == null) Debug.LogError($"{name}: {nameof(pressPlay)}  audio clip is missing.");
+        if (pressButton == null) Debug.LogError($"{name}: {nameof(pressButton)}  audio clip is missing.");
+        if (win == null) Debug.LogError($"{name}: {nameof(win)}  audio clip is missing.");
+        if (lose == null) Debug.LogError($"{name}: {nameof(lose)}  audio clip is missing.");
     }
 }

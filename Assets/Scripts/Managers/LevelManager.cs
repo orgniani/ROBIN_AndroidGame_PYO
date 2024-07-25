@@ -15,6 +15,6 @@ public class LevelManager : MonoBehaviour
 
     private void LoadAndOpenScene(int sceneBuildIndex)
     {
-        LoaderManager.Get().LoadScene(sceneBuildIndex, fakeLoadingTime);
+        LoaderManager.GetLoaderManager().LoadScene(sceneBuildIndex, fakeLoadingTime);
     }
 }

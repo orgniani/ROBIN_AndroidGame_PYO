@@ -26,8 +26,6 @@ public class ActionController : MonoBehaviour
 
     private IconSetter iconSetter;
 
-    private int round = 0;
-
     public event Action<Player, ActionType, Player> OnActionChosen;
     public event Action OnActionFailed;
 
@@ -160,11 +158,6 @@ public class ActionController : MonoBehaviour
         {
             OnRangeAttack();
             closestTarget = FindClosestTarget(currentPlayer.GetMaxAttackRange());
-        }
-
-        if (closestTarget != null)
-        {
-            round++;
         }
 
         target = closestTarget;

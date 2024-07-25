@@ -7,14 +7,16 @@ public class LoaderManager : MonoBehaviour
 {
     private static LoaderManager instance;
 
-    public float loadingProgress;
+    private float loadingProgress;
     private float timeLoading;
     private float fakeLoadTime = 2;
+
+    public float LoadingProgress => loadingProgress;
 
     public static event Action<LoaderManager> OnLoadingStart;
     public static event Action<LoaderManager> OnLoadingEnd;
 
-    public static LoaderManager Get()
+    public static LoaderManager GetLoaderManager()
     {
         return instance;
     }

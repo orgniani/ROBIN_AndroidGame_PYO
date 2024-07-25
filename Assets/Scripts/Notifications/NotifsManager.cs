@@ -9,6 +9,8 @@ public class NotifsManager : MonoBehaviour
     private const string GROUP_ID = "Main";
     private const string CHANNEL_ID = "Notification";
 
+    private const string NotificationsInitializedKey = "NotificationsInitialized";
+
     private static NotifsManager instance;
 
     private void Awake()
@@ -27,7 +29,7 @@ public class NotifsManager : MonoBehaviour
 
     private void Start()
     {
-        if (!PlayerPrefs.HasKey("NotificationsInitialized"))
+        if (!PlayerPrefs.HasKey(NotificationsInitializedKey))
         {
             var group = new AndroidNotificationChannelGroup()
             {
@@ -50,7 +52,7 @@ public class NotifsManager : MonoBehaviour
 
             StartCoroutine(RequestPermission());
 
-            PlayerPrefs.SetString("NotificationsInitialized", "si");
+            PlayerPrefs.SetString(NotificationsInitializedKey, "yes");
             PlayerPrefs.Save();
         }
 
@@ -74,7 +76,7 @@ public class NotifsManager : MonoBehaviour
         var notification01 = new AndroidNotification();
 
         notification01.Title = "Catalina Orgniani :)";
-        notification01.Text = "Hey! You haven't played in 10 minutes! Come back!";
+        notification01.Text = "Hey! You haven't played in 10 minutes! The kitties are waiting for you!";
         notification01.FireTime = System.DateTime.Now.AddMinutes(10);
 
         AndroidNotificationCenter.SendNotification(notification01, CHANNEL_ID);

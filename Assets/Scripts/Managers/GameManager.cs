@@ -33,6 +33,7 @@ public class GameManager : MonoBehaviour
     private MovementController movementController;
 
     public MovementController MovementController => movementController;
+    public ActionController ActionController => actionController;
 
     public bool IsWaitingForMovement { set; get; } 
 
@@ -41,6 +42,8 @@ public class GameManager : MonoBehaviour
     public event Action<Player> OnUpdatePlayer;
     public event Action<GameOverReason, Player> OnGameOver;
     public event Action OnPlayerDeath;
+
+    public event Action OnInitialized;
 
     private void Awake()
     {
@@ -57,9 +60,12 @@ public class GameManager : MonoBehaviour
         {
             players[i].onDead += KillCounter;
         }
+
+        Initialize();
+        StartCoroutine(PlayerTurn());
     }
 
-    private void Start()
+    private void Initialize()
     {
         currentPlayer = players[0];
 
@@ -88,7 +94,7 @@ public class GameManager : MonoBehaviour
         IsWaitingForMovement = true;
 
         movementController = new MovementController(gameView, new MapBuilder(), players.Count, players);
-        StartCoroutine(PlayerTurn());
+        OnInitialized?.Invoke();
     }
 
     private void Update()
