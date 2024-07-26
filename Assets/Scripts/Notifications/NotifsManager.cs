@@ -76,7 +76,7 @@ public class NotifsManager : MonoBehaviour
         var notification01 = new AndroidNotification();
 
         notification01.Title = "Catalina Orgniani :)";
-        notification01.Text = "Hey! You haven't played in 10 minutes! The kitties are waiting for you!";
+        notification01.Text = "Hey! You haven't played in 10 minutes!";
         notification01.FireTime = System.DateTime.Now.AddMinutes(10);
 
         AndroidNotificationCenter.SendNotification(notification01, CHANNEL_ID);
